@@ -17,7 +17,7 @@ skynet.register_protocol {
 local handler = {}  --- @type table<_, fun(...)>
 
 --- @param source number 源地址(客户端)
---- @param conf table<_, ...> 配置
+--- @param conf table<watchdog, ...> 配置
 function handler.open(source, conf)
 	watchdog = conf.watchdog or source
 end
