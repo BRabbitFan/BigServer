@@ -3,6 +3,7 @@ local gateserver = require "snax.gateserver"
 
 
 -- watchdog地址
+
 local watchdog  --- @type string
 
 local connection = {}  --- @type table<fd, connection<fd|client|agent|ip|mode, ...>>
