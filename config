@@ -19,7 +19,9 @@ standalone = "0.0.0.0:2013"     -- 绑定地址(主节点设置)
 
 server = "./"
 skynet = "./skynet/"
-luaservice = server.."service/?.lua;"..skynet.."service/?.lua;"..skynet.."test/?.lua;"..skynet.."examples/?.lua;"..skynet.."test/?/init.lua"
+luacode = "./luacode/"
+
+luaservice = server.."luacode/service/?.lua;"..skynet.."service/?.lua;"..skynet.."test/?.lua;"..skynet.."examples/?.lua;"..skynet.."test/?/init.lua"
 lualoader = skynet .. "lualib/loader.lua"
 lua_path = skynet.."lualib/?.lua;"..skynet.."lualib/?/init.lua"
 lua_cpath = skynet .. "luaclib/?.so"
