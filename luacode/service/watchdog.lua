@@ -1,5 +1,5 @@
 local skynet = require "skynet"
-
+require "skynet.manager"
 local CMD = {}
 local SOCKET = {}
 local gate
@@ -12,7 +12,8 @@ skynet.start(function()
       local f = SOCKET[subcmd]
       local suc, ret = pcall(f, ...)
     end
+    skynet.retpack(true)
   end)
-
+  skynet.register ".watchdog"
   gate = skynet.newservice("gate")
 end)

@@ -1,8 +1,11 @@
 local skynet = require "skynet"
+require "skynet.manager"
+require "skynet.harbor"
 local sprotoloader = require "sprotoloader"
-local sharedata = require "sharedata"
+local sharedata = require "skynet.sharedata"
 
-local function startGate()
+---启动网关
+local function startGateway()
 	-- local watchdog = skynet.newservice("watchdog")
 	-- skynet.call(watchdog, "lua", "start", {
 	-- 	port = 8888,
@@ -18,12 +21,12 @@ local function startGate()
 		nodelay = true,
 		servername = "gate",
 	})
-	sharedata.new("gate", watchdog)
+	print(watchdog)
+	-- sharedata.new("watchdog", {watchdog})
+	
 end
 
 skynet.start(function()
-	skynet.error("Big Start!")
-	startGate()
 	-- skynet.error("Server start")
 	-- skynet.uniqueservice("protoloader")
 	-- if not skynet.getenv "daemon" then
@@ -33,5 +36,13 @@ skynet.start(function()
 	-- skynet.newservice("simpledb")
 
 	-- skynet.error("Watchdog listen on", 8888)
+
+	skynet.error("Big Start!")
+	startGateway()
+	-- local watchdog = sharedata.query("watchdog")
+	-- print(watchdog[1])
+	-- local watchdog = skynet.queryname "watchdog"
+	local watchdog = skynet.localname ".watchdog"
+	print(watchdog)
 	skynet.exit()
 end)
