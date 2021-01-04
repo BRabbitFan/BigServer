@@ -1,5 +1,6 @@
 local skynet = require "skynet"
 require "skynet.manager"
+require "util"
 local CMD = {}
 local SOCKET = {}
 local gate
@@ -14,6 +15,7 @@ skynet.start(function()
     end
     skynet.retpack(true)
   end)
-  skynet.register ".watchdog"
+  -- skynet.register(skynet.getenv("watchdog"))
+  SetSvr("watchdog")
   gate = skynet.newservice("gate")
 end)

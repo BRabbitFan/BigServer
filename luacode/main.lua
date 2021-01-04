@@ -1,6 +1,6 @@
 local skynet = require "skynet"
 require "skynet.manager"
-require "skynet.harbor"
+require "util"
 local sprotoloader = require "sprotoloader"
 local sharedata = require "skynet.sharedata"
 
@@ -42,7 +42,9 @@ skynet.start(function()
 	-- local watchdog = sharedata.query("watchdog")
 	-- print(watchdog[1])
 	-- local watchdog = skynet.queryname "watchdog"
-	local watchdog = skynet.localname ".watchdog"
+	-- local watchdog = skynet.localname(skynet.getenv("watchdog"))
+	local watchdog = GetSvr("watchdog")
+	print(type(watchdog))
 	print(watchdog)
 	skynet.exit()
 end)
