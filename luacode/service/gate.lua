@@ -4,10 +4,10 @@ local gateserver = require "snax.gateserver"
 
 -- watchdog地址
 
-local watchdog  --- @type string
+local watchdog  ---@type string
 
-local connection = {}  --- @type table<fd, connection<fd|client|agent|ip|mode, ...>>
-local forwarding = {}  --- @type table<agent, connection<fd|client|agent|ip|mode, ...>>
+local connection = {}  ---@type table<fd, connection<fd|client|agent|ip|mode, ...>>
+local forwarding = {}  ---@type table<agent, connection<fd|client|agent|ip|mode, ...>>
 
 -- 注册client消息类型. 默认打包, 默认解包.
 skynet.register_protocol {
@@ -15,15 +15,15 @@ skynet.register_protocol {
 	id = skynet.PTYPE_CLIENT,
 }
 
-local handler = {}  --- @type table<_, fun(...)>
+local handler = {}  ---@type table<_, fun(...)>
 
---- @param source number 源地址(客户端)
---- @param conf table<watchdog, ...> 配置
+---@param source number 源地址(客户端)
+---@param conf table<watchdog, ...> 配置
 function handler.open(source, conf)
 	watchdog = conf.watchdog or source
 end
 
---- @param fd number 句柄
+---@param fd number 句柄
 function handler.message(fd, msg, sz)
 	-- recv a package, forward it
 	local c = connection[fd]
