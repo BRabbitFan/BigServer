@@ -1,29 +1,49 @@
+-- -----------------------------
+-- https://github.com/BRabbitFan
+-- -----------------------------
+-- Author       : BRabbitFan
+-- Date         : 2020-12-31 19:41:13
+-- LastEditer   : BRabbitFan
+-- LastEditTime : 2021-01-06 01:42:33
+-- FilePath     : /BigServer/luacode/service/gate.lua
+-- Description  : 网关服务---gate
+-- -----------------------------
+
+---require------------------------------------------------------------------------------------------
+
 local skynet = require "skynet"
 local gateserver = require "snax.gateserver"
 
+---global-------------------------------------------------------------------------------------------
+
+---local--------------------------------------------------------------------------------------------
 
 -- watchdog地址
-
 local watchdog  ---@type string
 
-local connection = {}  ---@type table<fd, connection<fd|client|agent|ip|mode, ...>>
+-- {句柄->连接信息} 映射表
+local connection = {}  ---@type table<fd, connection<fd|ip|client|agent, ...>>
+
 local forwarding = {}  ---@type table<agent, connection<fd|client|agent|ip|mode, ...>>
 
--- 注册client消息类型. 默认打包, 默认解包.
-skynet.register_protocol {
-	name = "client",
-	id = skynet.PTYPE_CLIENT,
-}
-
 local handler = {}  ---@type table<_, fun(...)>
+local CMD = {}
 
+---global-function----------------------------------------------------------------------------------
+
+---local-function-----------------------------------------------------------------------------------
+
+---网关启动时调用
 ---@param source number 源地址(客户端)
 ---@param conf table<watchdog, ...> 配置
 function handler.open(source, conf)
 	watchdog = conf.watchdog or source
 end
 
+---有消息到达时调用
 ---@param fd number 句柄
+---@param msg any msg + sz = 未解包的消息
+---@param sz any msg + sz = 未解包的消息
 function handler.message(fd, msg, sz)
 	-- recv a package, forward it
 	local c = connection[fd]
@@ -38,6 +58,9 @@ function handler.message(fd, msg, sz)
 	end
 end
 
+---有客户端连接时调用
+---@param fd number 句柄
+---@param addr string 地址
 function handler.connect(fd, addr)
 	local c = {
 		fd = fd,
@@ -77,8 +100,6 @@ function handler.warning(fd, size)
 	skynet.send(watchdog, "lua", "socket", "warning", fd, size)
 end
 
-local CMD = {}
-
 function CMD.forward(source, fd, client, address)
 	local c = assert(connection[fd])
 	unforward(c)
@@ -103,4 +124,13 @@ function handler.command(cmd, source, ...)
 	return f(source, ...)
 end
 
+---do-----------------------------------------------------------------------------------------------
+
+-- 注册client消息类型. 默认打包, 默认解包.
+skynet.register_protocol {
+	name = "client",
+	id = skynet.PTYPE_CLIENT,
+}
+
+-- 启动网关
 gateserver.start(handler)
