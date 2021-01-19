@@ -17,20 +17,22 @@ standalone = "0.0.0.0:2013"     -- 绑定地址(主节点设置)
 ----------------------------------------------------------------------------------------------------
 -- 路径配置
 
-server = "./"
-skynet = "./skynet/"
-luacode = "./luacode/"
-service = "./luacode/service/"
-util = "./luacode/util/"
-conf = "./luacode/conf/"
+luaservice =               "./luacode/?.lua;"
+luaservice = luaservice .. "./luacode/service/?.lua;"
+luaservice = luaservice .. "./skynet/service/?.lua;"
 
--- ..skynet.."test/?.lua;"..skynet.."examples/?.lua;"..skynet.."test/?/init.lua"
-luaservice = luacode.."?.lua;"..service.."?.lua;"..skynet.."service/?.lua;"
-lualoader = skynet .. "lualib/loader.lua"
-lua_path = skynet.."lualib/?.lua;"..skynet.."lualib/?/init.lua;"..luacode.."?.lua;"
-lua_cpath = skynet.."luaclib/?.so"
-snax = skynet.."examples/?.lua;"..skynet.."test/?.lua"
-cpath = skynet.."cservice/?.so"
+lualoader = "./skynet/lualib/loader.lua"
+
+lua_path =             "./skynet/lualib/?.lua;"
+lua_path = lua_path .. "./skynet/lualib/?/init.lua;"
+lua_path = lua_path .. "./luacode/?.lua;"
+
+lua_cpath = "./skynet/luaclib/?.so"
+
+cpath = "./skynet/cservice/?.so"
+
+snax =         "./skynet/examples/?.lua;"
+snax = snax .. "./skynet/test/?.lua"
 
 ----------------------------------------------------------------------------------------------------
 -- 服务配置

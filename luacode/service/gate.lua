@@ -4,19 +4,13 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 19:41:13
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-06 01:42:33
+-- LastEditTime : 2021-01-19 21:59:00
 -- FilePath     : /BigServer/luacode/service/gate.lua
 -- Description  : 网关服务---gate
 -- -----------------------------
 
----require------------------------------------------------------------------------------------------
-
 local skynet = require "skynet"
 local gateserver = require "snax.gateserver"
-
----global-------------------------------------------------------------------------------------------
-
----local--------------------------------------------------------------------------------------------
 
 -- watchdog地址
 local watchdog  ---@type string
@@ -28,10 +22,6 @@ local forwarding = {}  ---@type table<agent, connection<fd|client|agent|ip|mode,
 
 local handler = {}  ---@type table<_, fun(...)>
 local CMD = {}
-
----global-function----------------------------------------------------------------------------------
-
----local-function-----------------------------------------------------------------------------------
 
 ---网关启动时调用
 ---@param source number 源地址(客户端)
@@ -123,8 +113,6 @@ function handler.command(cmd, source, ...)
 	local f = assert(CMD[cmd])
 	return f(source, ...)
 end
-
----do-----------------------------------------------------------------------------------------------
 
 -- 注册client消息类型. 默认打包, 默认解包.
 skynet.register_protocol {
