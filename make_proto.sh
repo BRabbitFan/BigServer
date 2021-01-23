@@ -1,4 +1,5 @@
 #!/bin/bash
+
 baseDir="."
 srcDir=$baseDir/proto-src/
 outDir=$baseDir/proto/
