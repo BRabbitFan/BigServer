@@ -4,28 +4,78 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-23 16:09:52
+-- LastEditTime : 2021-01-25 22:17:42
 -- FilePath     : /BigServer/service/gateway/watchdog.lua
 -- Description  : 网关服务---watchdog
 -- -----------------------------
 
 local skynet = require "skynet"
-require "skynet.manager"
+
 local util = require "util.service_name"
+local conf = require "conf.service_name"
 
 local CMD = {}
 local SOCKET = {}
 local gate
 local agent = {}
 
+function SOCKET.open(fd, addr)
+	skynet.error("New client from : " .. addr)
+	agent[fd] = skynet.newservice("agent")
+	skynet.call(agent[fd], "lua", "start", { 
+		gate = gate,
+		client = fd,
+		watchdog = skynet.self()
+	})
+end
+
+local function close_agent(fd)
+	local a = agent[fd]
+	agent[fd] = nil
+	if a then
+		skynet.call(gate, "lua", "kick", fd)
+		-- disconnect never return
+		skynet.send(a, "lua", "disconnect")
+	end
+end
+
+function SOCKET.close(fd)
+	print("socket close",fd)
+	close_agent(fd)
+end
+
+function SOCKET.error(fd, msg)
+	print("socket error",fd, msg)
+	close_agent(fd)
+end
+
+function SOCKET.warning(fd, size)
+	-- size K bytes havn't send out in fd
+	print("socket warning", fd, size)
+end
+
+function SOCKET.data(fd, msg)
+end
+
+function CMD.start(conf)
+	skynet.call(gate, "lua", "open" , conf)
+end
+
+function CMD.close(fd)
+	close_agent(fd)
+end
+
 skynet.start(function()
-  skynet.dispatch("lua", function(session, source, cmd, subcmd, ...)
-    if cmd == "socket" then
-      local f = SOCKET[subcmd]
-      local suc, ret = pcall(f, ...)
-    end
-    skynet.retpack(true)
-  end)
-  util.setSvr("watchdog")
-  gate = skynet.newservice("gate")
+	skynet.dispatch("lua", function(session, source, cmd, subcmd, ...)
+		if cmd == "socket" then
+			local f = SOCKET[subcmd]
+			f(...)
+			-- socket api don't need return
+		else
+			local f = assert(CMD[cmd])
+			skynet.ret(skynet.pack(f(subcmd, ...)))
+		end
+	end)
+
+	gate = skynet.newservice("gate")
 end)

@@ -4,12 +4,14 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-23 16:07:05
+-- LastEditTime : 2021-01-25 22:08:52
 -- FilePath     : /BigServer/service/main.lua
 -- Description  : 入口服务---启动各项服务
 -- -----------------------------
 
 local skynet = require "skynet"
+
+local cfgSvrName = require "conf.service_name"
 
 ---启动网关(gate, watchdog)
 local function startGateway()
@@ -20,11 +22,20 @@ local function startGateway()
 		port = gateway_port,
 		maxclient = max_client,
 		nodelay = true,
-		servername = "gate",
+		servername = cfgSvrName.gate,
+	})
+end
+
+---启动数据中心
+local function startDataCenter()
+	local dataCenter = skynet.newservice("data_center")
+	skynet.call(dataCenter, "lua", "start", {
+		svrName = cfgSvrName.dataCenter,
 	})
 end
 
 skynet.start(function()
 	startGateway()
+	startDataCenter()
 	skynet.exit()
 end)

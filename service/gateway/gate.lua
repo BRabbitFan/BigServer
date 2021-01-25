@@ -4,9 +4,9 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 19:41:13
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-19 21:59:00
--- FilePath     : /BigServer/luacode/service/gate.lua
--- Description  : 网关服务---gate
+-- LastEditTime : 2021-01-25 21:51:00
+-- FilePath     : /BigServer/service/gateway/gate.lua
+-- Description  : 网关服务---消息分发
 -- -----------------------------
 
 local skynet = require "skynet"
