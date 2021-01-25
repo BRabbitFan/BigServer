@@ -2,22 +2,23 @@
 -- skynet配置
 
 -- preload = ""	                -- 启动前运行脚本
-thread = 8                      -- 服务器线程数
-logger = nil                    -- 日志服务
-logpath = "."                   -- 日志路径
+thread = 4                      -- 工作线程数
+logger = "./log/game.log"       -- 日志服务
+logpath = "./"                  -- 日志路径
 harbor = 1                      -- 节点编号
 address = "127.0.0.1:2526"      -- 本节点
 master = "127.0.0.1:2013"       -- 主节点
 start = "main"	-- main script  -- 入口服务
 bootstrap = "snlua bootstrap"	  -- The service for bootstrap
 standalone = "0.0.0.0:2013"     -- 绑定地址(主节点设置)
+-- daemon = "./skynet.pid"         -- 守护进程
 -- snax_interface_g = "snax_g"
--- daemon = "./skynet.pid"
 
 ----------------------------------------------------------------------------------------------------
 -- 路径配置
 
 luaservice =               "./service/?.lua;"
+luaservice = luaservice .. "./service/gateway/?.lua;"
 luaservice = luaservice .. "./service/?/main.lua;"
 luaservice = luaservice .. "./skynet/service/?.lua;"
 

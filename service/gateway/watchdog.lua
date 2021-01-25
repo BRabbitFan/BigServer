@@ -4,14 +4,14 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-19 21:58:38
--- FilePath     : /BigServer/luacode/service/watchdog.lua
+-- LastEditTime : 2021-01-23 16:09:52
+-- FilePath     : /BigServer/service/gateway/watchdog.lua
 -- Description  : 网关服务---watchdog
 -- -----------------------------
 
 local skynet = require "skynet"
 require "skynet.manager"
-require "util.service_name"
+local util = require "util.service_name"
 
 local CMD = {}
 local SOCKET = {}
