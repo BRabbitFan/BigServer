@@ -14,13 +14,13 @@ enum PhoneType {
 }
 
 message Phone {
-  optional MsgNum msgNum = 1[default = PHONE];
+  optional MsgNum msgNum = 1 [default = PHONE];
   optional string number = 2;
   optional PhoneType type = 3 [default = MOBILE];
 }
 
 message Person {
-  optional MsgNum msgNum = 1[default = PERSON];
+  optional MsgNum msgNum = 1 [default = PERSON];
   optional string name = 2;
   optional int32 age = 3;
   optional string email = 4;
@@ -28,6 +28,6 @@ message Person {
 }
 
 message AddressBook {
-  optional MsgNum msgNum = 1[default = ADDRESS_BOOK];
+  optional MsgNum msgNum = 1 [default = ADDRESS_BOOK];
   repeated Person person = 2;
 }
