@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 19:41:13
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-25 21:51:00
+-- LastEditTime : 2021-01-29 21:09:29
 -- FilePath     : /BigServer/service/gateway/gate.lua
 -- Description  : 网关服务---消息分发
 -- -----------------------------
@@ -13,14 +13,18 @@ local skynet = require "skynet"
 local gateserver = require "snax.gateserver"
 
 -- watchdog地址
-local watchdog  ---@type string
+local watchdog  ---@type number
 
 -- {句柄->连接信息} 映射表
-local connection = {}  ---@type table<fd, connection<fd|ip|client|agent, ...>>
+local connection = {}  ---@type table<fd, fd|ip>
 
+-- {agent->连接信息} 映射表
 local forwarding = {}  ---@type table<agent, connection<fd|client|agent|ip|mode, ...>>
 
+-- 处理客户端消息
 local handler = {}  ---@type table<_, fun(...)>
+
+-- 处理服务器命令
 local CMD = {}
 
 ---网关启动时调用

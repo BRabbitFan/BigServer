@@ -4,18 +4,18 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 19:39:48
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-29 20:02:43
+-- LastEditTime : 2021-01-29 21:50:49
 -- FilePath     : /BigServer/service/agent/main.lua
 -- Description  : Agent服务入口 -- 一个Agent对应一个Client
 -- -----------------------------
 
 local skynet = require "skynet"
 
-local CMD = require "cmd"
+local CMD = require "agent_cmd"
 
-local MSG = require "msg"
+local MSG = require "agent_msg"
 
-local DATA = require "data"
+local DATA = require "agent_data"
 
 skynet.register_protocol({
   name = "client",

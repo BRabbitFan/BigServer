@@ -1,8 +1,8 @@
 {
   "Lua.diagnostics.disable": [
-    "lowercase-global",
-    "unbalanced-assignments",
+    "undefined-doc-name",
+    "duplicate-doc-class",
     "undefined-global",
-    "undefined-doc-name"
+    "unbalanced-assignments"
   ]
 }

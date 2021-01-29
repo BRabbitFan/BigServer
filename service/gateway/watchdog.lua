@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-25 22:17:42
+-- LastEditTime : 2021-01-29 21:11:10
 -- FilePath     : /BigServer/service/gateway/watchdog.lua
 -- Description  : 网关服务---watchdog
 -- -----------------------------
@@ -22,7 +22,7 @@ local agent = {}
 function SOCKET.open(fd, addr)
 	skynet.error("New client from : " .. addr)
 	agent[fd] = skynet.newservice("agent")
-	skynet.call(agent[fd], "lua", "start", { 
+	skynet.call(agent[fd], "lua", "start", {
 		gate = gate,
 		client = fd,
 		watchdog = skynet.self()
