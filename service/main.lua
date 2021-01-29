@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-29 21:05:25
+-- LastEditTime : 2021-01-29 22:43:42
 -- FilePath     : /BigServer/service/main.lua
 -- Description  : 入口服务---启动各项服务
 -- -----------------------------
@@ -31,6 +31,15 @@ local function startDataCenter()
 	local dataCenter = skynet.newservice("data_center")
 	skynet.call(dataCenter, "lua", "start", {
 		svrName = cfgSvrName.dataCenter,
+	})
+end
+
+---启动配置服务
+local function startConfSvr()
+	local confServer = skynet.newservice("conf_svr")
+	skynet.call(confServer, "lua", "start", {
+		conf = {},
+		proto = {},
 	})
 end
 
