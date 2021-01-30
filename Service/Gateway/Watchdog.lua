@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 14:18:47
+-- LastEditTime : 2021-01-30 15:48:54
 -- FilePath     : /BigServer/Service/Gateway/Watchdog.lua
 -- Description  : 网关服务---watchdog
 -- -----------------------------
@@ -14,14 +14,15 @@ local skynet = require "skynet"
 local CMD = {}
 local SOCKET = {}
 local gate
-local agent = {}
+local login
+local agent = {}  ---@type table<fd, agent>
 
 function SOCKET.open(fd, addr)
 	skynet.error("New client from : " .. addr)
 	agent[fd] = skynet.newservice("agent")
 	skynet.call(agent[fd], "lua", "start", {
 		gate = gate,
-		client = fd,
+		fd = fd,
 		watchdog = skynet.self()
 	})
 end
@@ -73,6 +74,6 @@ skynet.start(function()
 			skynet.ret(skynet.pack(f(subcmd, ...)))
 		end
 	end)
-
+	login = skynet.newservice("Login")
 	gate = skynet.newservice("Gate")
 end)

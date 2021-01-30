@@ -1,13 +1,6 @@
--- -----------------------------
--- https://github.com/BRabbitFan
--- -----------------------------
--- Author       : BRabbitFan
--- Date         : 2021-01-05 14:17:40
--- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 13:53:33
--- FilePath     : /BigServer/GameConfig/ServiceName.lua
--- Description  : 服务别名表
--- -----------------------------
+--[[
+这个是测试数据, 服务别名定义放在GlobalName/ServiceName.lua中
+]]
 
 ---服务别名表
 ---@type table<service_name, local_service_name>
