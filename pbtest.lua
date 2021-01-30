@@ -4,11 +4,11 @@ local protoc = require "protoc"
 local pb = require "pb"
 local serpent = require "serpent"
 
-local trans = require "util.trans"
+local util = require "Util.BaseUtil"
 
 
-pb.loadfile "proto/test.pb"
-pb.loadfile "proto/examp.pb"
+pb.loadfile "Proto/test.pb"
+pb.loadfile "Proto/examp.pb"
 
 -- protoc:load [[
 --   message Phone {
@@ -37,9 +37,9 @@ local bytes = pb.encode("Packet.Person", data)
 print(pb.tohex(bytes))
 
 local msg = pb.decode("Packet.Person", bytes)
-local str = trans.tabToStr(msg, "block")
+local str = util.tabToStr(msg, "block")
 print(str)
-local tab = trans.strToTab(str)
+local tab = util.strToTab(str)
 print(tab.name)
 print(tab.age)
 print(tab.email)
@@ -54,5 +54,5 @@ bytes = pb.encode("Packet.EX", data)
 print(pb.tohex(bytes))
 
 local msg = pb.decode("Packet.EX", bytes)
-local str = trans.tabToStr(msg, "block")
+local str = util.tabToStr(msg, "block")
 print(str)
