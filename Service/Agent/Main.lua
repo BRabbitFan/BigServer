@@ -4,12 +4,13 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 19:39:48
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 14:18:06
+-- LastEditTime : 2021-01-30 19:36:01
 -- FilePath     : /BigServer/Service/Agent/Main.lua
 -- Description  : Agent服务入口 -- 一个Agent对应一个Client
 -- -----------------------------
 
 local skynet = require "skynet"
+local netpack = require "skynet.netpack"
 
 local CMD = require "AgentCmd"
 
@@ -21,7 +22,7 @@ skynet.register_protocol({
   name = "client",
   id = skynet.PTYPE_CLIENT,
   pack = skynet.pack,
-  unpack = skynet.unpack,
+  unpack = netpack.tostring,
 })
 
 skynet.start(function()
@@ -31,10 +32,12 @@ skynet.start(function()
       skynet.retpack(f(...))
     end
   end)
-  skynet.dispatch("client", function(session, source, cmd, ...)
-    local f = MSG[cmd]
-    if f then
-      skynet.retpack(f(...))
-    end
+  skynet.dispatch("client", function(session, source, ...)
+    print(...)
+    -- print(session, source, cmd, ...)
+    -- local f = MSG[cmd]
+    -- if f then
+    --   skynet.retpack(f(...))
+    -- end
   end)
 end)

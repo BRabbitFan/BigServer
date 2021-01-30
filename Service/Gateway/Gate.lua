@@ -4,13 +4,16 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 19:41:13
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 14:30:59
+-- LastEditTime : 2021-01-30 19:40:54
 -- FilePath     : /BigServer/Service/Gateway/Gate.lua
 -- Description  : 网关服务---消息分发
 -- -----------------------------
 
-local skynet = require "skynet"
+local skynet = require "skynet.manager"
 local gateserver = require "snax.gateserver"
+
+local SVR_NAME = require "GlobalDefine.ServiceName"
+local util = require "Util.SvrUtil"
 
 -- watchdog地址
 local watchdog  ---@type number
@@ -31,6 +34,7 @@ local CMD = {}
 ---@param source number 源地址(客户端)
 ---@param conf table<watchdog, ...> 配置
 function handler.open(source, conf)
+	skynet.register(SVR_NAME.gate)
 	watchdog = conf.watchdog or source
 end
 
@@ -39,6 +43,7 @@ end
 ---@param msg any msg + sz = 未解包的消息
 ---@param sz any msg + sz = 未解包的消息
 function handler.message(fd, msg, sz)
+	util.log("[gate][handler.message]"..fd)
 	-- recv a package, forward it
 	local c = connection[fd]
 	local agent = c.agent
@@ -61,6 +66,7 @@ function handler.connect(fd, addr)
 		ip = addr,
 	}
 	connection[fd] = c
+	util.log(util.tabToStr(connection))
 	skynet.send(watchdog, "lua", "socket", "open", fd, addr)
 end
 
@@ -95,6 +101,7 @@ function handler.warning(fd, size)
 end
 
 function CMD.forward(source, fd, client, address)
+	print("[gate][cmd][forward]", source, fd, client, address)
 	local c = assert(connection[fd])
 	unforward(c)
 	c.client = client or 0

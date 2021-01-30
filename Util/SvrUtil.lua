@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 20:51:39
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 14:09:42
+-- LastEditTime : 2021-01-30 18:53:28
 -- FilePath     : /BigServer/Util/SvrUtil.lua
 -- Description  : 服务工具模块--包括了基础模块, 需要在服务中调用
 -- -----------------------------
@@ -24,6 +24,11 @@ end
 ---@return number 服务地址
 function _M.getSvr(svrName)
   return skynet.localname(svrName)
+end
+
+
+function _M.log(msg)
+  skynet.error("["..os.date("%Y-%m-%d %H:%M:%S").."]"..msg)
 end
 
 return _M
