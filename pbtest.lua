@@ -8,6 +8,7 @@ local trans = require "util.trans"
 
 
 pb.loadfile "proto/test.pb"
+pb.loadfile "proto/examp.pb"
 
 -- protoc:load [[
 --   message Phone {
@@ -32,10 +33,10 @@ local data = {
   }
 }
 
-local bytes = pb.encode("testPack.Person", data)
+local bytes = pb.encode("Packet.Person", data)
 print(pb.tohex(bytes))
 
-local msg = pb.decode("testPack.Person", bytes)
+local msg = pb.decode("Packet.Person", bytes)
 local str = trans.tabToStr(msg, "block")
 print(str)
 local tab = trans.strToTab(str)
@@ -44,3 +45,14 @@ print(tab.age)
 print(tab.email)
 print(tab.phone[1].type, tab.phone[1].number)
 print(tab.phone[2].type, tab.phone[2].number)
+
+data = {
+  exname = "testex",
+}
+
+bytes = pb.encode("Packet.EX", data)
+print(pb.tohex(bytes))
+
+local msg = pb.decode("Packet.EX", bytes)
+local str = trans.tabToStr(msg, "block")
+print(str)

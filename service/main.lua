@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-29 22:43:42
+-- LastEditTime : 2021-01-30 11:53:21
 -- FilePath     : /BigServer/service/main.lua
 -- Description  : 入口服务---启动各项服务
 -- -----------------------------
@@ -38,13 +38,14 @@ end
 local function startConfSvr()
 	local confServer = skynet.newservice("conf_svr")
 	skynet.call(confServer, "lua", "start", {
-		conf = {},
-		proto = {},
+		loadAll = true,
+		loadList = {},
 	})
 end
 
 skynet.start(function()
 	startGateway()
 	startDataCenter()
+	startConfSvr()
 	skynet.exit()
 end)

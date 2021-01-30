@@ -1,0 +1,9 @@
+syntax = "proto2";
+package Packet;
+
+enum MessageId {
+  TEST_PHONE = 10000;
+  TEST_PERSON = 10001;
+  TEST_ADDRESS_BOOK = 10002;
+  
+}
