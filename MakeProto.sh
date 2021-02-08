@@ -10,8 +10,8 @@ for file in $(ls $srcDir); do
   fileSuffix=${file#*.}
 
   if [[ "$fileSuffix" == "proto" ]]; then
-    echo "protoc -o "$outDir$fileName".pb "$srcDir$fileName".proto"
-    protoc -o $outDir$fileName".pb" $srcDir$fileName".proto"
+    echo "protoc -o "$outDir$fileName".pb "$srcDir$fileName".proto --proto_path "$srcDir
+    protoc -o $outDir$fileName".pb" $srcDir$fileName".proto" --proto_path $srcDir
   else
     echo $file "is not a protobuf file"
   fi

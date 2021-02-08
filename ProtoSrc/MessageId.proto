@@ -7,3 +7,8 @@ enum MessageId {
   TEST_ADDRESS_BOOK = 10002;
   
 }
+
+message msg {
+  optional int32 date = 1;
+  optional string sss = 2;
+}

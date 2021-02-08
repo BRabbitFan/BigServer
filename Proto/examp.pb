@@ -1,5 +1,5 @@
 
->
-ProtoSrc/examp.protoexPacket"
+5
+examp.protoexPacket"
 EX
 exname (	Rexname

@@ -7,8 +7,8 @@ local serpent = require "serpent"
 local util = require "Util.BaseUtil"
 
 
-pb.loadfile "Proto/test.pb"
-pb.loadfile "Proto/examp.pb"
+pb.loadfile "ProtoSrc/test.pb"
+pb.loadfile "ProtoSrc/MessageId.pb"
 
 -- protoc:load [[
 --   message Phone {
@@ -24,13 +24,18 @@ pb.loadfile "Proto/examp.pb"
 -- ]]
 
 local data = {
+  id = 10000,
   name = "fanjunhong",
   age = 21,
   email = "fanjh1999@gmail.com",
   phone = {
     {type = "WORK", number = "17689278657"},
     {type = "HOME", number = "15059103986"},
-  }
+  },
+  mmssgg = {
+    date = 123,
+    sss = "321312",
+  },
 }
 
 local bytes = pb.encode("Packet.Person", data)
@@ -45,14 +50,4 @@ print(tab.age)
 print(tab.email)
 print(tab.phone[1].type, tab.phone[1].number)
 print(tab.phone[2].type, tab.phone[2].number)
-
-data = {
-  exname = "testex",
-}
-
-bytes = pb.encode("Packet.EX", data)
-print(pb.tohex(bytes))
-
-local msg = pb.decode("Packet.EX", bytes)
-local str = util.tabToStr(msg, "block")
-print(str)
+print(tab.mmssgg.sss)
