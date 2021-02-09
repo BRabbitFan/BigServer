@@ -7,8 +7,8 @@ local serpent = require "serpent"
 local util = require "Util.BaseUtil"
 
 
-pb.loadfile "ProtoSrc/test.pb"
-pb.loadfile "ProtoSrc/MessageId.pb"
+pb.loadfile "Proto/test.pb"
+pb.loadfile "Proto/MessageId.pb"
 
 -- protoc:load [[
 --   message Phone {
