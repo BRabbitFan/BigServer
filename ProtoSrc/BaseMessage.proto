@@ -1,0 +1,11 @@
+syntax = "proto2";
+package Packet;
+import "MessageId.proto";
+
+message Account {
+  optional MessageId messageId = 1 [default = BASE_ACCOUNT];
+  optional string account = 2;
+  optional string ip = 3;
+  optional string port = 4;
+  optional string addr = 5;
+}

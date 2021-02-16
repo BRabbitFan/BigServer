@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 21:42:53
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-02-09 21:00:53
+-- LastEditTime : 2021-02-16 18:49:15
 -- FilePath     : /BigServer/Util/PbMap.lua
 -- Description  : lua-protobuf的再封装, 方便使用
 -- -----------------------------
@@ -43,12 +43,12 @@ end
 
 
 function _M.pack(msgName, msgTab)
-  local msgStr
+  local msgStr = pb.encode(PACKET..msgName, msgTab)
   return msgStr
 end
 
 function _M.unpack(msgName, msgStr)
-  local msgTab
+  local msgTab = pb.decode(PACKET..msgName, msgStr)
   return msgTab
 end
 

@@ -1,11 +1,12 @@
 
-é
+•
 MessageId.protoPacket"+
 msg
 date (Rdate
-sss (	Rsss*F
-	MessageId
+sss (	Rsss*]
+	MessageId
+BASE_ACCOUNT°ç
 
-TEST_PHONEêN
-TEST_PERSONëN
-TEST_ADDRESS_BOOKíN
+TEST_PHONEêø
+TEST_PERSONëø
+TEST_ADDRESS_BOOKíø
