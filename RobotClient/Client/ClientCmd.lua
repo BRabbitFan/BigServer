@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-30 17:10:35
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 19:33:06
+-- LastEditTime : 2021-03-06 15:39:49
 -- FilePath     : /BigServer/RobotClient/Client/ClientCmd.lua
 -- Description  : 机器人客户端--控制命令 (C2S)
 -- -----------------------------
@@ -90,12 +90,12 @@ local function recver(fd)
   while true do
     local len = socket.read(fd, 2)
     if len then
-        local l1, l2 = string.byte(len, 1, 2)
-        len = l1 * 256 + l2
-        local str = socket.read(fd, len)
-        if str then
-            print(str)
-        end
+      local l1, l2 = string.byte(len, 1, 2)
+      len = l1 * 256 + l2
+      local str = socket.read(fd, len)
+      if str then
+        print(str)
+      end
     end
 end
 end
@@ -104,7 +104,7 @@ function _M.connect()
   Server = socket.open(server.addr, server.port)
   -- skynet.fork(sender, Server)
   skynet.fork(recver, Server)
-  socket.write(Server, netpack.pack("123"))
+  -- socket.write(Server, netpack.pack("123"))
 end
 
 return _M

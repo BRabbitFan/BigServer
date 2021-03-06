@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-30 16:55:44
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 18:04:06
+-- LastEditTime : 2021-03-06 15:34:32
 -- FilePath     : /BigServer/RobotClient/RobotMain.lua
 -- Description  : 机器人客户端--主服务(控制服务)
 -- -----------------------------
@@ -41,7 +41,7 @@ skynet.start(function()
   ServerAddr = skynet.getenv "server_addr"
   ServerPort = skynet.getenv "server_port"
 
-  print(type(ServerAddr), type(ServerPort))
+  -- print(type(ServerAddr), type(ServerPort))
 
   StartClient({
     MainSvr = skynet.self(),

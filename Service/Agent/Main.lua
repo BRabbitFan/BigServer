@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 19:39:48
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 19:36:01
+-- LastEditTime : 2021-03-06 15:25:49
 -- FilePath     : /BigServer/Service/Agent/Main.lua
 -- Description  : Agent服务入口 -- 一个Agent对应一个Client
 -- -----------------------------
@@ -33,7 +33,7 @@ skynet.start(function()
     end
   end)
   skynet.dispatch("client", function(session, source, ...)
-    print(...)
+    print("agent : ", ...)
     -- print(session, source, cmd, ...)
     -- local f = MSG[cmd]
     -- if f then

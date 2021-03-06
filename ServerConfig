@@ -18,7 +18,7 @@ standalone = "0.0.0.0:2013"     -- 绑定地址(主节点设置)
 -- 路径配置
 
 luaservice =               "./Service/?.lua;"
-luaservice = luaservice .. "./Service/Gateway/?.lua;"
+--luaservice = luaservice .. "./Service/Gateway/?.lua;"
 luaservice = luaservice .. "./Service/?/Main.lua;"
 luaservice = luaservice .. "./skynet/service/?.lua;"
 
