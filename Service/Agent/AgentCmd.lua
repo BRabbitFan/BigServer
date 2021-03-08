@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 19:53:10
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-06 17:05:42
+-- LastEditTime : 2021-03-08 14:01:23
 -- FilePath     : /BigServer/Service/Agent/AgentCmd.lua
 -- Description  : agent的命令
 -- -----------------------------
@@ -28,8 +28,11 @@ function _M.start(conf)
   skynet.send(SVR.gate, "lua", "forward", base.fd)
 end
 
-function _M.close()
-
+function _M.close(...)
+  util.log(" [Agent] [CMD.close] ")
+  local fd = DATA.base.fd
+  skynet.send(SVR.gate, "lua", "unforward", fd)
+  skynet.exit()
 end
 
 return _M

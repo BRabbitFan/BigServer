@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 19:39:48
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-06 15:25:49
+-- LastEditTime : 2021-03-08 13:53:43
 -- FilePath     : /BigServer/Service/Agent/Main.lua
 -- Description  : Agent服务入口 -- 一个Agent对应一个Client
 -- -----------------------------
@@ -26,18 +26,24 @@ skynet.register_protocol({
 })
 
 skynet.start(function()
+
   skynet.dispatch("lua", function(session, source, cmd, ...)
     local f = CMD[cmd]
     if f then
       skynet.retpack(f(...))
     end
   end)
+
   skynet.dispatch("client", function(session, source, ...)
-    print("agent : ", ...)
+    print(...)
+    if ... == "close" then
+      CMD.close(...)
+    end
     -- print(session, source, cmd, ...)
     -- local f = MSG[cmd]
     -- if f then
     --   skynet.retpack(f(...))
     -- end
   end)
+
 end)
