@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-30 17:10:35
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-08 14:01:52
+-- LastEditTime : 2021-03-08 14:38:21
 -- FilePath     : /BigServer/RobotClient/Client/ClientCmd.lua
 -- Description  : 机器人客户端--控制命令 (C2S)
 -- -----------------------------
@@ -97,7 +97,7 @@ local function recver(fd)
         print(str)
       end
     end
-end
+  end
 end
 
 function _M.connect()

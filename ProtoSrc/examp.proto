@@ -1,7 +1,0 @@
-syntax = "proto2";
-package exPacket;
-
-
-message EX {
-  optional string exname = 1;
-}

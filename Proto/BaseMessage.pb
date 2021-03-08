@@ -1,8 +1,10 @@
 
-É
-BaseMessage.protoPacketMessageId.proto"š
-Account=
-	messageId (2.Packet.MessageId:BASE_ACCOUNTR	messageId
+±
+BaseMessage.protoPacket"7
+BaseMessage
+name (	Rname
+bytes (Rbytes"[
+Account
 account (	Raccount
 ip (	Rip
 port (	Rport

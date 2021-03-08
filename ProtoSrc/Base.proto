@@ -1,0 +1,27 @@
+syntax = "proto2";
+package MSG;
+
+message msg_a {
+  optional string name = 1;
+}
+
+message msg_b {
+  optional int32 num = 1;
+}
+
+enum MessageId {
+  MSG_A = 1;
+  MSG_B = 2;
+}
+
+message Message {
+  required MessageId messageId = 1;
+
+  optional msg_a msg_a = 2;
+  optional msg_b msg_b = 3;
+}
+
+message Msg {
+  required string message_name = 1;
+  required bytes message_byte = 2;
+}

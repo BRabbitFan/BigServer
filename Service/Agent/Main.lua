@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 19:39:48
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-08 13:53:43
+-- LastEditTime : 2021-03-08 16:33:19
 -- FilePath     : /BigServer/Service/Agent/Main.lua
 -- Description  : Agent服务入口 -- 一个Agent对应一个Client
 -- -----------------------------
@@ -12,10 +12,10 @@
 local skynet = require "skynet"
 local netpack = require "skynet.netpack"
 
+local PbMap = require "Util.PbMap"
+
 local CMD = require "AgentCmd"
-
 local MSG = require "AgentMsg"
-
 local DATA = require "AgentData"
 
 skynet.register_protocol({
