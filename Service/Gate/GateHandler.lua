@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-03-06 16:12:10
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-08 14:31:45
+-- LastEditTime : 2021-03-11 23:56:25
 -- FilePath     : /BigServer/Service/Gate/GateHandler.lua
 -- Description  : 网关handler--处理客户端的消息(socket)
 -- -----------------------------
@@ -49,7 +49,7 @@ function _M.connect(fd, addr)
   DATA.connection[fd] = conn
   util.log(" [Gate] [connect] "..util.tabToStr(conn))
 
-  skynet.call(agent, "lua", "start", {
+  skynet.send(agent, "lua", "start", {
     gate = skynet.self(),
     fd = fd,
   })

@@ -4,17 +4,10 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 21:42:53
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-08 16:32:49
+-- LastEditTime : 2021-03-11 22:22:11
 -- FilePath     : /BigServer/Util/PbMap.lua
 -- Description  : lua-protobuf的再封装, 方便使用
 -- -----------------------------
-
---[[
-  统一消息格式:
-  1-2字节 : 消息长度; 3字节开始为消息包.
-  消息包第一个字段为消息Id(MessageId.proto中定义)
-
---]]
 
 local pb = require "pb"
 
@@ -68,9 +61,7 @@ function _M.unpack(baseBytes)
   local baseTable = pb.decode(PACKET..BASE_MSG, baseBytes)
   local msgName = baseTable.name
   local msgBytes = baseTable.bytes
-
-  local msgTable = pb.decode(PACKET..msgName, msgBytes)
-
+  local msgTable = pb.decode(PACKET..tostring(msgName), msgBytes)
   return msgName, msgTable
 end
 

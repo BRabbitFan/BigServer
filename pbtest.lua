@@ -53,7 +53,7 @@ local util = require "Util.BaseUtil"
 -- print(tab.mmssgg.sss)
 
 
-pb.loadfile "Proto/Base.pb"
+-- pb.loadfile "Proto/Base.pb"
 
 -- local data = {
 --   messageId = "MSG_B",
@@ -76,22 +76,43 @@ pb.loadfile "Proto/Base.pb"
 -- end
 -- print(util.tabToStr(realMsg, "block"))
 
-local data = {
-  num = 123,
-}
+-- local data = {
+--   num = 123,
+-- }
 
-local byte = pb.encode("MSG.msg_b", data)
+-- local byte = pb.encode("MSG.msg_b", data)
 
-local msgData = {
-  message_name = "msg_b",
-  message_byte = byte,
-}
+-- local msgData = {
+--   message_name = "msg_b",
+--   message_byte = byte,
+-- }
 
-local b = pb.encode("MSG.Msg", msgData)
+-- local b = pb.encode("MSG.Msg", msgData)
 
-local d = pb.decode("MSG.Msg", b)
-local msgName = d.message_name
-print(msgName)
+-- local d = pb.decode("MSG.Msg", b)
+-- local msgName = d.message_name
+-- print(msgName)
 
-local d2 = pb.decode("MSG."..msgName, d.message_byte)
-print(util.tabToStr(d2, "block"))
+-- local d2 = pb.decode("MSG."..msgName, d.message_byte)
+-- print(util.tabToStr(d2, "block"))
+
+-- local pbmap = require "Util.PbMap"
+
+-- local data = {
+--   account = "12345",
+--   ip = "ip123",
+--   port = "port123",
+--   addr = "addr312",
+-- }
+
+-- local bytes = pbmap.pack("Account", data)
+
+
+-- local n, d = pbmap.unpack(bytes)
+-- print(n, util.tabToStr(d, "block"))
+
+local len = 52
+local lenStr = tostring(len)
+local lenBytes = string.pack("<", lenStr)
+
+print(string.unpack(">", lenBytes))
