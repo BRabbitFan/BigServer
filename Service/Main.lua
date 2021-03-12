@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-06 16:19:39
+-- LastEditTime : 2021-03-12 21:25:51
 -- FilePath     : /BigServer/Service/Main.lua
 -- Description  : 入口服务---启动各项服务
 -- -----------------------------
@@ -15,19 +15,6 @@ local sharedata = require "skynet.sharedata"
 local util = require "Util.SvrUtil"
 
 local SVR_NAME = require "GlobalDefine.ServiceName"
-
----启动网关(gate, watchdog)
-local function startGateway()
-	local gateway_port = skynet.getenv("gateway_port") or 8000
-	local max_client = skynet.getenv("max_client") or 32
-	local watchdog = skynet.newservice("Watchdog")
-	skynet.call(watchdog, "lua", "start", {
-		port = gateway_port,
-		maxclient = max_client,
-		nodelay = true,
-		servername = SVR_NAME.gate,
-	})
-end
 
 -- 启动网关
 local function startGate()
@@ -58,11 +45,28 @@ local function startConfigLoader()
 	})
 end
 
+---启动游戏大厅
+local function startHall()
+	local hall = skynet.newservice("Hall")
+	skynet.call(hall, "lua", "start", {
+		svrName = SVR_NAME.hall,
+	})
+end
+
+---启动数据库服务
+local function startDatabase()
+	local database = skynet.newservice("Database")
+	skynet.call(database, "lua", "start", {
+		svrName = SVR_NAME.database,
+	})
+end
+
 skynet.start(function()
-	-- startGateway()
 	startGate()
 	startDataCenter()
 	startConfigLoader()
+	startHall()
+	startDatabase()
 	-- local CONF = sharedata.query("CONF")
 	-- print(util.tabToStr(CONF))
 	-- print(CONF.ServiceName.gate)

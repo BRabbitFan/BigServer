@@ -1,0 +1,11 @@
+-- -----------------------------
+-- https://github.com/BRabbitFan
+-- -----------------------------
+-- Author       : BRabbitFan
+-- Date         : 2021-03-12 21:19:36
+-- LastEditer   : BRabbitFan
+-- LastEditTime : 2021-03-12 21:19:52
+-- FilePath     : /BigServer/Service/Hall/HallData.lua
+-- Description  : 游戏大厅--数据
+-- -----------------------------
+
