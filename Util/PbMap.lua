@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 21:42:53
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-11 22:22:11
+-- LastEditTime : 2021-03-12 16:39:15
 -- FilePath     : /BigServer/Util/PbMap.lua
 -- Description  : lua-protobuf的再封装, 方便使用
 -- -----------------------------
@@ -18,9 +18,7 @@ local PACKET = "Packet."        -- 统一的Packet
 local BASE_MSG = "BaseMessage"  -- 统一外层消息名
 
 local pbList = {
-  -- PB_SRC.."MessageId.pb",  -- 消息Id
-  PB_SRC.."BaseMessage.pb",       -- 基础消息
-  -- PB_SRC.."test.pb",       -- 测试消息
+  PB_SRC.."Base.pb",       -- 基础消息
 }
 
 ---加载pb文件

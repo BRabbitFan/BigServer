@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 19:53:49
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-12 00:27:21
+-- LastEditTime : 2021-03-12 17:44:14
 -- FilePath     : /BigServer/Service/Agent/AgentMsg.lua
 -- Description  : 客户端的请求消息处理
 -- -----------------------------
@@ -23,19 +23,15 @@ function _M.sendToClient(msgBytes)
   socket.write(DATA.base.fd, sendBytes)
 end
 
-function _M.Account(msgTable)
+function _M.ReqRegisterAccount(msgTable)
   print(util.tabToStr(msgTable, "block"))
-  local Account = {
-    account = "backAccount",
-    ip = "backIp",
-    port = "backPort",
-    addr = "backAddr",
-  }
-  _M.sendToClient(PbMap.pack("Account", Account))
-end
-
-function _M.Test(msgTable)
-  print("_M.Test")
+  local account = DATA.account
+  account.account = msgTable.account
+  account.password = msgTable.password
+  account.name = msgTable.name
+  _M.sendToClient(PbMap.pack("RetRegisterAccount", {
+    error_code = 0;
+  }))
 end
 
 return _M
