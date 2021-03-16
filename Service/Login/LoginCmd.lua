@@ -11,30 +11,56 @@
 
 local skynet = require "skynet"
 
+local ERROR_CODE = require "GlobalDefine.ErrorCode"
+local SVR = require "GlobalDefine.ServiceName"
+local util = require "Util.SvrUtil"
+
 local _M = {}
 
-local watchdog
-
-function _M.start(watchdogAddr)
-  watchdog = watchdogAddr
+function _M.start(source, conf)
+  util.setSvr(conf.svrName)
 end
 
 ---用户登录
 ---@param account string 用户名
 ---@param password string 密码
----@return integer uid 用户的uid
-function _M.login(account, password)
-  local uid
-  return uid
+---@return integer errorCode 错误码
+---@return table info 用户的信息
+function _M.login(source, account, password)
+  -- 检查是否已注册
+  local errorCode = skynet.call(SVR.dataCenter, "lua", "chkIsRegisterByAccount")
+  if errorCode == ERROR_CODE.BASE_FAILED then
+    return ERROR_CODE.LOGIN_ACOUNT_NOT_EXISTS
+  end
+  -- 检查是否已登录
+  local _, info = skynet.call(SVR.database, "lua", "getPlayerInfoByAccount", account)
+  errorCode = skynet.call(SVR.dataCenter, "lua", "chkIsLoginByUid", info.uid)
+  if errorCode == ERROR_CODE.BASE_FAILED then
+    return ERROR_CODE.LOGIN_SIGNED_IN_ALREADY
+  end
+  -- 向数据中心登记客户端已登录
+  errorCode = skynet.call(SVR.dataCenter, "lua", "setPlayerLogin", info.uid, source)
+  if errorCode ~= ERROR_CODE.BASE_SUCESS then
+    return errorCode
+  end
+  return ERROR_CODE.BASE_SUCESS, info
 end
 
 ---用户注册
 ---@param account string 用户名
 ---@param password string 密码
----@return boolean result 注册结果
 ---@return integer errorCode 错误码
-function _M.register(account, password)
-  return true, "register sucess"
+function _M.register(source, account, password)
+  local errorCode, result = skynet.call(SVR.database, "lua", "setPlayerInfo", {
+    account = tostring(account),
+    password = tostring(password),
+  })
+  if errorCode == ERROR_CODE.DB_MYSQL_DUPLICATE_ENTRY then
+    return ERROR_CODE.REGISTER_ACOUNT_EXISTS
+  elseif errorCode ~= ERROR_CODE.BASE_SUCESS then
+    return errorCode, result
+  end
+  return ERROR_CODE.BASE_SUCESS
 end
 
 return _M

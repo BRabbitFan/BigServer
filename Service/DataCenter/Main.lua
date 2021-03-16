@@ -11,21 +11,14 @@
 
 local skynet = require "skynet"
 
-local CMD = require "DataCenterCmd"
-
----全局Agent列表
----@type table<uid, agent>
-AgentList = {}
-
----全局Fd列表
----@type table<agent, fd>
-FdList = {}
+local Cmd = require "DataCenterCmd"
+local Data = require "DataCenterData"
 
 skynet.start(function()
   skynet.dispatch("lua", function(session, source, cmd, ...)
-    local f = CMD[cmd]
-    if f then
-      skynet.retpack(f(...))
+    local func = Cmd[cmd]
+    if func then
+      skynet.retpack(func(...))
     end
   end)
 end)

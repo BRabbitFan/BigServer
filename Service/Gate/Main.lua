@@ -15,9 +15,9 @@ local gateserver = require "snax.gateserver"
 local SVR_NAME = require "GameConfig.ServiceName"
 local util = require "Util.SvrUtil"
 
-local handler = require "GateHandler"  -- 处理客户端消息
-local CMD = require "GateCmd"  -- 处理服务器命令
-local DATA = {}  -- 网关数据
+local Handler = require "GateHandler"  -- 处理客户端消息
+local Cmd = require "GateCmd"  -- 处理服务器命令
+local Data = {}  -- 网关数据
 
 -- 启动网关
-gateserver.start(handler)
+gateserver.start(Handler)

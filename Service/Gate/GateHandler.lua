@@ -13,8 +13,8 @@ local skynet = require "skynet.manager"
 
 local util = require "Util.SvrUtil"
 
-local CMD = require "GateCmd"
-local DATA = require "GateData"
+local Cmd = require "GateCmd"
+local Data = require "GateData"
 
 -- 注册client消息类型, 网关不打包、解包
 skynet.register_protocol {
@@ -30,9 +30,9 @@ local _M = {}
 ---@param source number 源地址(客户端)
 ---@param conf table<watchdog, ...> 配置
 function _M.open(source, conf)
-  DATA.conf = conf
+  Data.conf = conf
 	skynet.register(conf.servername)
-  print(util.tabToStr(DATA.conf, "block"))
+  print(util.tabToStr(Data.conf, "block"))
 end
 
 ---有客户端连接
@@ -46,7 +46,7 @@ function _M.connect(fd, addr)
     agent = agent,
   }
 
-  DATA.connection[fd] = conn
+  Data.connection[fd] = conn
   util.log(" [Gate] [connect] "..util.tabToStr(conn))
 
   skynet.send(agent, "lua", "start", {
@@ -58,7 +58,7 @@ end
 ---链接关闭
 ---@param fd number 句柄
 function _M.disconnect(fd)
-  local agent = DATA.connection[fd].agent
+  local agent = Data.connection[fd].agent
   if agent then
     skynet.send(agent, "lua", "close")
   end
@@ -72,7 +72,7 @@ end
 function _M.message(fd, msg, sz)
   util.log(" [Gate] [handler.message] "..fd)
 
-  local agent = DATA.connection[fd].agent
+  local agent = Data.connection[fd].agent
   if agent then
     skynet.send(agent, "client", msg, sz)
   end
@@ -83,7 +83,7 @@ end
 ---@param source number 服务源地址
 ---@return any
 function _M.command(cmd, source, ...)
-  local f = assert(CMD[cmd])
+  local f = assert(Cmd[cmd])
   return f(source, ...)
 end
 

@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-03-13 19:41:30
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-16 15:32:04
+-- LastEditTime : 2021-03-16 15:39:37
 -- FilePath     : /BigServer/Service/Database/DatabaseMysql.lua
 -- Description  : 数据库服务--mysql相关
 -- -----------------------------
@@ -17,7 +17,7 @@ local ERROR_CODE = require "GlobalDefine.ErrorCode"
 local MYSQL_CONF = require("GameConfig/DatabaseConf").MYSQL_CONF
 local MYSQL_ERRNO = require("GameConfig/DatabaseConf").MYSQL_ERRNO
 
-local db
+local db  -- Mysql句柄
 
 local _M = {}
 
@@ -36,12 +36,13 @@ function _M.getConnect(host, port, database, user, password, maxPacketSize)
     user = user or MYSQL_CONF.user,
     password = password or MYSQL_CONF.password,
     maxPacketSize = maxPacketSize or MYSQL_CONF.maxPacketSize,
-    on_connect = function (...) return ... end
+    on_connect = function(...) return ... end
   })
 end
 
+---关闭连接
 function _M.disConnect()
-  return db:disconnect()
+  db:disconnect()
 end
 
 ---插入新用户
@@ -59,6 +60,17 @@ function _M.insertUser(account, password)
   end
   if resTab.errno == MYSQL_ERRNO.DUPLICATE_ENTRY then
     return ERROR_CODE.DB_MYSQL_DUPLICATE_ENTRY
+  end
+  return ERROR_CODE.DB_MYSQL_ERROR_WITH_TAB, resTab
+end
+
+---获取所有用户信息
+---@return errorCode integer 错误码
+---@return result table 查询结果(BASE_SUCESS) / 错误信息(未知错误)
+function _M.selectAllUser()
+  local resTab = db:query("SELECT * FROM user;")
+  if not resTab.badresult then
+    return ERROR_CODE.BASE_SUCESS, resTab
   end
   return ERROR_CODE.DB_MYSQL_ERROR_WITH_TAB, resTab
 end

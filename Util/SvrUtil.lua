@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-29 20:51:39
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-01-30 18:53:28
+-- LastEditTime : 2021-03-16 15:44:53
 -- FilePath     : /BigServer/Util/SvrUtil.lua
 -- Description  : 服务工具模块--包括了基础模块, 需要在服务中调用
 -- -----------------------------
@@ -26,7 +26,8 @@ function _M.getSvr(svrName)
   return skynet.localname(svrName)
 end
 
-
+---输出日志
+---@param msg string 日志信息
 function _M.log(msg)
   skynet.error("["..os.date("%Y-%m-%d %H:%M:%S").."]"..msg)
 end

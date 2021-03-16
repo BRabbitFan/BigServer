@@ -17,11 +17,11 @@
 
 local skynet = require "skynet"
 
-local CMD = require "ConfigLoaderCmd"
+local Cmd = require "ConfigLoaderCmd"
 
 skynet.start(function()
   skynet.dispatch("lua", function(session, source, cmd, ...)
-    local f = CMD[cmd]
+    local f = Cmd[cmd]
     if f then
       skynet.retpack(f(...))
     end

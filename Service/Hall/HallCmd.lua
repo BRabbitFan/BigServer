@@ -15,7 +15,7 @@ local util = require "Util.SvrUtil"
 
 local ERROR_CODE = require "GlobalDefine.ErrorCode"
 
-local DATA = require "HallData"
+local Data = require "HallData"
 
 local _M = {}
 
@@ -30,14 +30,14 @@ end
 ---@return integer roomNum 房间数量
 ---@return table roomList 房间列表(HallData.info.roomList)
 function _M.getHallInfo()
-  return ERROR_CODE.BASE_SUCESS, DATA.info.roomNum, DATA.roomList
+  return ERROR_CODE.BASE_SUCESS, Data.info.roomNum, Data.roomList
 end
 
 ---玩家创建房间
 ---@return number errorCode 错误码
 ---@return number roomAddr 房间服务地址
 function _M.createRoom()
-  if DATA.info.roomNum == DATA.GLOBAL_CONFIG.RoomRole.maxRoomNum then
+  if Data.info.roomNum == Data.GLOBAL_CONFIG.RoomRole.maxRoomNum then
     return ERROR_CODE.HALL_ROOM_NUM_MAX
   end
 
@@ -52,12 +52,12 @@ end
 ---@return number errorCode 错误码
 ---@return number roomAddr 房间服务地址
 function _M.joinRoom(roomId)
-  local room = DATA.roomList[roomId] or nil
+  local room = Data.roomList[roomId] or nil
   if not room then
     return ERROR_CODE.HALL_ROOM_NOT_EXISTS
   end
 
-  if room.playerNum == DATA.GLOBAL_CONFIG.maxPlayerNum then
+  if room.playerNum == Data.GLOBAL_CONFIG.maxPlayerNum then
     return ERROR_CODE.HALL_PLAYER_NUM_FULL
   end
 
@@ -69,7 +69,7 @@ end
 ---@param roomId integer 要退出的房间Id
 ---@return number errorCode 错误码
 function _M.quitRoom(roomId)
-  local room = DATA.roomList[roomId] or nil
+  local room = Data.roomList[roomId] or nil
   if not room then
     return ERROR_CODE.HALL_ROOM_NOT_EXISTS
   end
@@ -85,11 +85,11 @@ end
 ---@param roomId integer 要关闭的房间
 ---@return number errorCode 错误码
 function _M.closeRoom(roomId)
-  if not DATA.roomList[roomId] then  -- 若不存在(已关闭)则返回
+  if not Data.roomList[roomId] then  -- 若不存在(已关闭)则返回
     return ERROR_CODE.BASE_SUCESS
   end
 
-  DATA.roomList[roomId] = nil
+  Data.roomList[roomId] = nil
   return ERROR_CODE.BASE_SUCESS
 end
 

@@ -9,19 +9,15 @@
 -- Description  : 登录服务
 -- -----------------------------
 
---[[
-  登录服务是一个无状态的服务, 其只用于验证用户登录, 且只与watchdog通讯
---]]
-
 local skynet = require "skynet"
 
-local CMD = require "LoginCmd"
+local Cmd = require "LoginCmd"
 
 skynet.start(function()
   skynet.dispatch("lua", function(session, source, cmd, ...)
-    local f = CMD[cmd]
-    if f then
-      skynet.retpack(f(...))
+    local func = Cmd[cmd]
+    if func then
+      skynet.retpack(func(source, ...))
     end
   end)
 end)

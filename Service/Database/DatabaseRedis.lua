@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-03-13 19:42:46
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-16 15:31:09
+-- LastEditTime : 2021-03-16 15:37:47
 -- FilePath     : /BigServer/Service/Database/DatabaseRedis.lua
 -- Description  : 数据库服务--redis相关
 -- -----------------------------
@@ -17,7 +17,7 @@ local ERROR_CODE = require "GlobalDefine.ErrorCode"
 local REDIS_CONF = require("GameConfig/DatabaseConf").REDIS_CONF
 local KEY_HEAD = require("GameConfig/DatabaseConf").REDIS_KEY_HEAD
 
-local db
+local db  -- Redis句柄
 
 local _M = {}
 
@@ -53,7 +53,11 @@ end
 function _M.getUidByAccount(account)
   account = tostring(account)
   local uid = db:hget(KEY_HEAD.ACCOUNT_TO_UID, account)
-  return ERROR_CODE.BASE_SUCESS, uid
+  print("uid->", uid)
+  if not uid then
+    return ERROR_CODE.DB_REDIS_HGET_EMPTY
+  end
+  return ERROR_CODE.BASE_SUCESS, tonumber(uid)
 end
 
 ---设置玩家信息
@@ -72,6 +76,10 @@ end
 function _M.getUserInfoByUid(uid)
   local keyStr = KEY_HEAD.USER_INFO .. tostring(uid)
   local valueStr = db:get(keyStr)
+  print(valueStr)
+  if not valueStr then
+    return ERROR_CODE.DB_REDIS_GET_EMPTY
+  end
   return ERROR_CODE.BASE_SUCESS, util.strToTab(valueStr)
 end
 

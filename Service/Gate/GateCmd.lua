@@ -13,7 +13,7 @@ local gateserver = require "snax.gateserver"
 
 local util = require "Util.SvrUtil"
 
-local DATA = require "GateData"
+local Data = require "GateData"
 
 local _M = {}
 
@@ -22,7 +22,7 @@ local _M = {}
 ---@param fd string 对应的socket句柄
 function _M.forward(agent, fd)
 	util.log(" [Gate] [CMD] [forward] agent->"..agent.." fd->"..fd)
-  if next(DATA.connection[fd]) then
+  if next(Data.connection[fd]) then
 		gateserver.openclient(fd)
 	end
 end
@@ -32,7 +32,7 @@ end
 ---@param fd string 对应的socket句柄
 function _M.unforward(agent, fd)
 	util.log(" [Gate] [CMD] [unforward] agent->"..agent.." fd->"..fd)
-	if next(DATA.connection[fd]) then
+	if next(Data.connection[fd]) then
 		gateserver.closeclient(fd)
 	end
 end

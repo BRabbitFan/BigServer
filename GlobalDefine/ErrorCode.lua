@@ -45,28 +45,29 @@ return {
   DB_MYSQL_ERROR_WITH_TAB   = 202003,  -- Mysql执行失败, 并携带一条table信息
   DB_REDIS_ERROR_WITH_TAB   = 202004,  -- Redis执行失败, 并携带一条table信息
   DB_MYSQL_DUPLICATE_ENTRY  = 202005,  -- Mysql插入失败, 重复条目
-  DB_REDIS_ERROR            = 302001,  -- Redis操作失败
+  DB_REDIS_HGET_EMPTY       = 202006,  -- Redis HGET操作失败, 空返回
+  DB_REDIS_GET_EMPTY        = 202007,  -- Redis GET操作失败, 空返回
+  DB_ACCOUNT_EMPTY          = 202008,  -- 数据库操作失败, 没有此账号
+  DB_REDIS_ERROR            = 302001,  -- Redis操作错误
 
   -- Agent服务相关(03)
 
-  -- Register服务相关(04)
+  -- Login/Register服务相关(04)
   REGISTER_ACOUNT_EXISTS    = 204001,  -- 注册失败, 用户名已存在
   REGISTER_ACOUNT_ILLEGAL   = 204002,  -- 注册失败, 用户名非法
   REGISTER_PASSWORD_ILLEGAL = 204003,  -- 注册失败, 密码非法
+  LOGIN_ACOUNT_NOT_EXISTS   = 204004,  -- 登录失败, 用户名不存在
+  LOGIN_PASSWORD_WRONG      = 204005,  -- 登录失败, 密码错误
+  LOGIN_SIGNED_IN_ALREADY   = 204006,  -- 登录失败, 已登录
 
-  -- Login服务相关(05)
-  LOGIN_ACOUNT_NOT_EXISTS   = 205001,  -- 登录失败, 用户名不存在
-  LOGIN_PASSWORD_WRONG      = 205002,  -- 登录失败, 密码错误
-  LOGIN_SIGNED_IN_ALREADY   = 205003,  -- 登录失败, 已登录
+  -- Hall服务相关(05)
+  HALL_ROOM_NUM_MAX         = 205001,  -- 创建房间失败, 房间数量已满
+  HALL_PLAYER_NUM_FULL      = 205002,  -- 进入房间失败, 房间已满员
+  HALL_INFO_NOT_EXISTS      = 305001,  -- 查询大厅信息错误, 大厅信息不存在
+  HALL_ROOM_NOT_EXISTS      = 305002,  -- 进入房间错误, 房间不存在
 
-  -- Hall服务相关(06)
-  HALL_ROOM_NUM_MAX         = 206001,  -- 创建房间失败, 房间数量已满
-  HALL_PLAYER_NUM_FULL      = 206002,  -- 进入房间失败, 房间已满员
-  HALL_INFO_NOT_EXISTS      = 306001,  -- 查询大厅信息错误, 大厅信息不存在
-  HALL_ROOM_NOT_EXISTS      = 306002,  -- 进入房间错误, 房间不存在
+  -- Room服务相关(06)
 
-  -- Room服务相关(07)
-
-  -- Race服务相关(08)
+  -- Race服务相关(07)
 
 }
