@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2020-12-31 18:28:01
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-12 21:25:51
+-- LastEditTime : 2021-03-16 15:32:44
 -- FilePath     : /BigServer/Service/Main.lua
 -- Description  : 入口服务---启动各项服务
 -- -----------------------------
@@ -67,8 +67,5 @@ skynet.start(function()
 	startConfigLoader()
 	startHall()
 	startDatabase()
-	-- local CONF = sharedata.query("CONF")
-	-- print(util.tabToStr(CONF))
-	-- print(CONF.ServiceName.gate)
 	skynet.exit()
 end)

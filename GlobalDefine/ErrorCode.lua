@@ -4,7 +4,7 @@
 -- Author       : BRabbitFan
 -- Date         : 2021-01-30 16:00:54
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-13 18:19:46
+-- LastEditTime : 2021-03-16 14:21:04
 -- FilePath     : /BigServer/GlobalDefine/ErrorCode.lua
 -- Description  : 错误码/状态码
 -- -----------------------------
@@ -29,14 +29,23 @@ return {
   -- 基本状态(00)
   BASE_SUCESS          = 100001,  -- 成功
   BASE_SUCESS_WITH_MSG = 100002,  -- 成功, 并携带一条string信息
+  BASE_SUCESS_WITH_TAB = 100003,  -- 成功, 并携带一条table信息
   BASE_FAILED          = 200001,  -- 失败
   BASE_FAILED_WITH_MSG = 200002,  -- 失败, 并携带一条string信息
+  BASE_FAILED_WITH_TAB = 200003,  -- 失败, 并携带一条table信息
 --BASE_ERROR           = 300001,  -- 错误 (禁用)
   BASE_ERROR_WITH_MSG  = 300002,  -- 错误, 并携带一条string信息
+  BASE_ERROR_WITH_TAB  = 300003,  -- 错误, 并携带一条table信息
 
   -- DataCenter服务相关(01)
 
   -- Database服务相关(02)
+  DB_MYSQL_ERROR_WITH_MSG   = 202001,  -- Mysql执行失败, 并携带一条string信息
+  DB_REDIS_ERROR_WITH_MSG   = 202002,  -- Redis执行失败, 并携带一条string信息
+  DB_MYSQL_ERROR_WITH_TAB   = 202003,  -- Mysql执行失败, 并携带一条table信息
+  DB_REDIS_ERROR_WITH_TAB   = 202004,  -- Redis执行失败, 并携带一条table信息
+  DB_MYSQL_DUPLICATE_ENTRY  = 202005,  -- Mysql插入失败, 重复条目
+  DB_REDIS_ERROR            = 302001,  -- Redis操作失败
 
   -- Agent服务相关(03)
 
