@@ -32,7 +32,6 @@ local _M = {}
 function _M.open(source, conf)
   Data.conf = conf
 	skynet.register(conf.servername)
-  print(util.tabToStr(Data.conf, "block"))
 end
 
 ---有客户端连接

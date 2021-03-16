@@ -53,7 +53,6 @@ end
 function _M.getUidByAccount(account)
   account = tostring(account)
   local uid = db:hget(KEY_HEAD.ACCOUNT_TO_UID, account)
-  print("uid->", uid)
   if not uid then
     return ERROR_CODE.DB_REDIS_HGET_EMPTY
   end

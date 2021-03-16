@@ -22,20 +22,21 @@ function _M.start(source, conf)
 end
 
 ---用户登录
+---@param source number 源地址
 ---@param account string 用户名
 ---@param password string 密码
 ---@return integer errorCode 错误码
 ---@return table info 用户的信息
 function _M.login(source, account, password)
   -- 检查是否已注册
-  local errorCode = skynet.call(SVR.dataCenter, "lua", "chkIsRegisterByAccount")
+  local errorCode = skynet.call(SVR.dataCenter, "lua", "chkIsRegisterByAccount", account)
   if errorCode == ERROR_CODE.BASE_FAILED then
     return ERROR_CODE.LOGIN_ACOUNT_NOT_EXISTS
   end
   -- 检查是否已登录
   local _, info = skynet.call(SVR.database, "lua", "getPlayerInfoByAccount", account)
   errorCode = skynet.call(SVR.dataCenter, "lua", "chkIsLoginByUid", info.uid)
-  if errorCode == ERROR_CODE.BASE_FAILED then
+  if errorCode == ERROR_CODE.BASE_SUCESS then
     return ERROR_CODE.LOGIN_SIGNED_IN_ALREADY
   end
   -- 向数据中心登记客户端已登录
@@ -46,14 +47,24 @@ function _M.login(source, account, password)
   return ERROR_CODE.BASE_SUCESS, info
 end
 
+---用户登出
+---@param source number 源地址
+---@param uid integer uid
+function _M.logout(source, uid)
+  skynet.call(SVR.dataCenter, "lua", "setPlayerLogout", uid)
+end
+
 ---用户注册
----@param account string 用户名
+---@param source number 源地址
+---@param account string 账号
 ---@param password string 密码
+---@param name string 名字
 ---@return integer errorCode 错误码
-function _M.register(source, account, password)
+function _M.register(source, account, password, name)
   local errorCode, result = skynet.call(SVR.database, "lua", "setPlayerInfo", {
     account = tostring(account),
     password = tostring(password),
+    name = tostring(name),
   })
   if errorCode == ERROR_CODE.DB_MYSQL_DUPLICATE_ENTRY then
     return ERROR_CODE.REGISTER_ACOUNT_EXISTS

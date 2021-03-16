@@ -9,28 +9,42 @@
 -- Description  : 客户端的请求消息处理
 -- -----------------------------
 
-local socket = require "skynet.socket"
+local skynet = require "skynet"
 
 local pbmap = require "Util.PbMap"
-local util = require "Util.BaseUtil"
+local util = require "Util.SvrUtil"
 
+local ERROR_CODE = require "GlobalDefine.ErrorCode"
+local SVR = require "GlobalDefine.ServiceName"
+
+local Cmd = require "AgentCmd"
 local Data = require "AgentData"
 
 local _M = {}
 
-function _M.sendToClient(msgBytes)
-  local sendBytes = string.pack(">s2", msgBytes)
-  socket.write(Data.base.fd, sendBytes)
+function _M.ReqLoginAccount(msgTable)
+  local info = msgTable.login_account
+  local errorCode, totalInfo = skynet.call(SVR.login, "lua", "login", info.account, info.password)
+
+  if errorCode == ERROR_CODE.BASE_SUCESS then
+    local account = Data.account
+    account.uid = totalInfo.uid
+    account.account = totalInfo.account
+    account.password = totalInfo.password
+    account.name = totalInfo.name
+  end
+
+  Cmd.sendToClient(pbmap.pack("RetLoginAccount", {
+    error_code = errorCode,
+  }))
 end
 
 function _M.ReqRegisterAccount(msgTable)
-  print(util.tabToStr(msgTable, "block"))
-  local account = Data.account
-  account.account = msgTable.account
-  account.password = msgTable.password
-  account.name = msgTable.name
-  _M.sendToClient(pbmap.pack("RetRegisterAccount", {
-    error_code = 0;
+  local info = msgTable.register_account
+  local errorCode = skynet.call(SVR.login, "lua", "register", info.account, info.password, info.name)
+
+  Cmd.sendToClient(pbmap.pack("RetRegisterAccount", {
+    error_code = errorCode,
   }))
 end
 

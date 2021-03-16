@@ -24,6 +24,9 @@ return {
   ---账号信息
   ---@type table<account|password|name, ...>
   account = {
+    ---@type integer
+    uid = nil,      ---uid
+
     ---@type string
     account = nil,  ---账号
 

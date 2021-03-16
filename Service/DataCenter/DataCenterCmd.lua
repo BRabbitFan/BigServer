@@ -23,10 +23,17 @@ function _M.start(conf)
   util.setSvr(conf.svrName)
 end
 
+---初始化用户列表
+---@param accountList table<account, true> account列表
+function _M.initAccountList(accountList)
+  Data.AccountList = accountList
+end
+
 ---检查账户是否已被注册
 ---@param account string 账户
 ---@return errorCode integer 错误码
 function _M.chkIsRegisterByAccount(account)
+  print(account, Data.AccountList[account])
   if Data.AccountList[account] then
     return ERROR_CODE.BASE_SUCESS
   else
@@ -38,6 +45,7 @@ end
 ---@param uid integer uid
 ---@return errorCode integer 错误码
 function _M.chkIsLoginByUid(uid)
+  print(uid, Data.UidToAgent[uid])
   if Data.UidToAgent[uid] then
     return ERROR_CODE.BASE_SUCESS
   else
@@ -62,8 +70,17 @@ function _M.setPlayerUnRegister(account)
 end
 
 ---设置玩家登录状态
+---@param uid integer uid
+---@param agent number agent地址
 function _M.setPlayerLogin(uid, agent)
   Data.UidToAgent[uid] = agent
+  return ERROR_CODE.BASE_SUCESS
+end
+
+---设置玩家登出状态
+---@param uid integer uid
+function _M.setPlayerLogout(uid)
+  Data.UidToAgent[uid] = nil
   return ERROR_CODE.BASE_SUCESS
 end
 

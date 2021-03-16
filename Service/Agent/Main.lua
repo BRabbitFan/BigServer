@@ -14,7 +14,7 @@ local socket = require "skynet.socket"
 local netpack = require "skynet.netpack"
 
 local pbmap = require "Util.PbMap"
-local util = require "Util.BaseUtil"
+local util = require "Util.SvrUtil"
 
 local Cmd = require "AgentCmd"
 local Msg = require "AgentMsg"
@@ -38,6 +38,7 @@ skynet.start(function()
 
   skynet.dispatch("client", function(session, source, ...)
     local msgName, msgTable = pbmap.unpack(...)
+    util.log(msgName.." "..util.tabToStr(msgTable, "block"))
     local func = Msg[msgName]
     if func then
       func(msgTable)  -- 网关来的消息不用返回

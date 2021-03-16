@@ -9,8 +9,11 @@
 -- Description  : 数据库服务--服务命令
 -- -----------------------------
 
+local skynet = require "skynet"
+
 local util = require "Util.SvrUtil"
 
+local SVR = require "GlobalDefine.ServiceName"
 local ERROR_CODE = require "GlobalDefine.ErrorCode"
 
 local Mysql = require "DatabaseMysql"
@@ -26,10 +29,13 @@ local function initRedis()
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode, resTab
   end
+  local accountList = {}
   for _, info in pairs(resTab) do
+    accountList[info.account] = true
     Redis.setUidByAccount(info.account, info.uid)
     Redis.setUserInfo(info.uid, info)
   end
+  skynet.send(SVR.dataCenter, "lua", "initAccountList", accountList)
   return ERROR_CODE.BASE_SUCESS
 end
 
@@ -45,7 +51,7 @@ end
 ---@return errorCode integer 错误码
 ---@return result table 查询结果(BASE_SUCESS) / 错误信息(未知错误)
 function _M.setPlayerInfo(infoTab)
-  local errorCode, resTab = Mysql.insertUser(infoTab.account, infoTab.password)
+  local errorCode, resTab = Mysql.insertUser(infoTab.account, infoTab.password, infoTab.name)
   if errorCode == ERROR_CODE.DB_MYSQL_DUPLICATE_ENTRY then
     return errorCode
   elseif errorCode == ERROR_CODE.DB_MYSQL_ERROR_WITH_TAB then
@@ -90,9 +96,7 @@ end
 ---@return uid integer uid
 function _M.getUidByAccount(account)
   local errorCode, uid = Redis.getUidByAccount(account)
-  if errorCode == ERROR_CODE.DB_REDIS_HGET_EMPTY or ERROR_CODE.DB_REDIS_GET_EMPTY then
-    return ERROR_CODE.DB_ACCOUNT_EMPTY
-  elseif errorCode ~= ERROR_CODE.BASE_SUCESS then
+  if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return ERROR_CODE.DB_REDIS_ERROR
   end
   return ERROR_CODE.BASE_SUCESS, uid

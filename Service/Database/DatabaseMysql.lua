@@ -48,12 +48,15 @@ end
 ---插入新用户
 ---@param account string 账户
 ---@param password string 密码
+---@param name string 名字
 ---@return errorCode integer 错误码
 ---@return result table 插入结果(BASE_SUCESS) / 错误信息(未知错误)
-function _M.insertUser(account, password)
+function _M.insertUser(account, password, name)
   account = tostring(account)
   password = tostring(password)
-  local resTab = db:query("INSERT user (account, password) VALUES (\""..account.."\", \""..password.."\");")
+  local resTab = db:query(
+    "INSERT user (account, password, name) VALUES (\""
+    ..account.."\", \""..password.."\", \""..name.."\");")
 
   if not resTab.badresult then
     return ERROR_CODE.BASE_SUCESS, resTab
