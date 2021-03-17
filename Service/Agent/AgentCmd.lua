@@ -14,6 +14,7 @@ local socket = require "skynet.socket"
 
 local SVR = require "GlobalDefine.ServiceName"
 local util = require "Util.SvrUtil"
+local pbmap = require "Util.PbMap"
 
 local Data = require "AgentData"
 
@@ -37,7 +38,14 @@ function _M.close(...)
   skynet.send(SVR.login, "lua", "logout", Data.account.uid)
   local fd = Data.base.fd
   skynet.send(SVR.gate, "lua", "unforward", fd)
+
+  -- TODO : 关闭连接的时候，退出房间
+
   skynet.exit()
+end
+
+function _M.sendSyncHallMessage(msgTable)
+  _M.sendToClient(pbmap.pack("SyncHallMessage", msgTable))
 end
 
 return _M

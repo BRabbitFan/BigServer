@@ -1,5 +1,5 @@
 
-”
+Õ
 
 Base.protoPacket"7
 BaseMessage
@@ -28,7 +28,11 @@ player_num (R	playerNum
 SyncHallMessage
 is_sync (RisSync
 room_num (RroomNum1
-	room_list (2.Packet.BaseRoomInfoRroomList"&
+	room_list (2.Packet.BaseRoomInfoRroomList"
+ReqCreateRoom".
+RetCreateRoom
+
+error_code (R	errorCode"&
 ReqJoinRoom
 room_id (RroomId",
 RetJoinRoom

@@ -37,4 +37,16 @@ return {
     name = nil,     ---名字
   },
 
+  ---房间信息
+  ---@type table<addr, ...>
+  room = {
+    addr = nil,
+  },
+
+  ---游戏信息
+  ---@type table
+  race = {
+
+  },
+
 }

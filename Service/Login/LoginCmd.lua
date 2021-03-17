@@ -39,6 +39,10 @@ function _M.login(source, account, password)
   if errorCode == ERROR_CODE.BASE_SUCESS then
     return ERROR_CODE.LOGIN_SIGNED_IN_ALREADY
   end
+  -- 检查密码
+  if password ~= info.password then
+    return ERROR_CODE.LOGIN_PASSWORD_WRONG
+  end
   -- 向数据中心登记客户端已登录
   errorCode = skynet.call(SVR.dataCenter, "lua", "setPlayerLogin", info.uid, source)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then

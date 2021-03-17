@@ -67,6 +67,7 @@ return {
   HALL_ROOM_NOT_EXISTS      = 305002,  -- 进入房间错误, 房间不存在
 
   -- Room服务相关(06)
+  ROOM_PLAYER_FULL          = 206001,  -- 房间已满员
 
   -- Race服务相关(07)
 

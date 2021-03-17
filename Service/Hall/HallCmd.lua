@@ -23,6 +23,7 @@ local _M = {}
 ---@param conf table 配置表
 function _M.start(conf)
   util.setSvr(conf.svrName)
+  Data.info.roomNum = 0;
 end
 
 ---查询大厅信息
@@ -30,20 +31,55 @@ end
 ---@return integer roomNum 房间数量
 ---@return table roomList 房间列表(HallData.info.roomList)
 function _M.getHallInfo()
-  return ERROR_CODE.BASE_SUCESS, Data.info.roomNum, Data.roomList
+  return ERROR_CODE.BASE_SUCESS, #(Data.roomList), Data.roomList
+end
+
+---获得新的随机房间号
+---@return newRoomId integer 房间号
+local function getNewRoomId()
+  local roomList = Data.roomList
+  local newRoomId
+  while true do
+    newRoomId = math.random(1000, 9999)
+    local isExists = false
+    for _, room in ipairs(roomList) do
+      if room.roomId == newRoomId then
+        isExists = true
+        break
+      end
+    end
+    if not isExists then
+      return newRoomId
+    end
+  end
 end
 
 ---玩家创建房间
+---@param account table 创建房间的玩家账号信息
 ---@return number errorCode 错误码
 ---@return number roomAddr 房间服务地址
-function _M.createRoom()
-  if Data.info.roomNum == Data.GLOBAL_CONFIG.RoomRole.maxRoomNum then
+function _M.createRoom(account)
+  local info = Data.info
+  local roomList = Data.roomList
+  -- 检查房间数是否已满
+  if info.roomNum == Data.GLOBAL_CONFIG.RoomRole.maxRoomNum then
     return ERROR_CODE.HALL_ROOM_NUM_MAX
   end
-
+  -- 开启新房间
+  local newRoomId = getNewRoomId()
   local newRoom = skynet.newservice("Room")
-  skynet.call(newRoom, "lua", "start")
-
+  skynet.call(newRoom, "lua", "start", {
+    roomId = newRoomId,
+    master = account,
+  })
+  -- 记录房间
+  roomList[newRoomId] = {
+    roomId = newRoomId,
+    playerNum = 1,
+    mapId = 1,
+    roomAddr = newRoom,
+  }
+  -- 返回新房间
   return ERROR_CODE.BASE_SUCESS, newRoom
 end
 

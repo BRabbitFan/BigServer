@@ -75,7 +75,6 @@ end
 function _M.getUserInfoByUid(uid)
   local keyStr = KEY_HEAD.USER_INFO .. tostring(uid)
   local valueStr = db:get(keyStr)
-  print(valueStr)
   if not valueStr then
     return ERROR_CODE.DB_REDIS_GET_EMPTY
   end

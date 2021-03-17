@@ -33,7 +33,6 @@ end
 ---@param account string 账户
 ---@return errorCode integer 错误码
 function _M.chkIsRegisterByAccount(account)
-  print(account, Data.AccountList[account])
   if Data.AccountList[account] then
     return ERROR_CODE.BASE_SUCESS
   else
@@ -45,7 +44,6 @@ end
 ---@param uid integer uid
 ---@return errorCode integer 错误码
 function _M.chkIsLoginByUid(uid)
-  print(uid, Data.UidToAgent[uid])
   if Data.UidToAgent[uid] then
     return ERROR_CODE.BASE_SUCESS
   else
