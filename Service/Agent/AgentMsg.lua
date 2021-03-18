@@ -17,7 +17,6 @@ local ERROR_CODE = require "GlobalDefine.ErrorCode"
 local SVR = require "GlobalDefine.ServiceName"
 
 local DEFINE = require "AgentDefine"
-local Cmd = require "AgentCmd"
 local Data = require "AgentData"
 
 local _M = {}
@@ -36,7 +35,7 @@ function _M.ReqLoginAccount(msgTable)
     account.name = totalInfo.name
   end
 
-  Cmd.sendToClient("RetLoginAccount", {
+  SendToClient("RetLoginAccount", {
     error_code = errorCode,
   })
 end
@@ -46,7 +45,7 @@ function _M.ReqRegisterAccount(msgTable)
   local info = msgTable.register_account
   local errorCode = skynet.call(SVR.login, "lua", "register", info.account, info.password, info.name)
 
-  Cmd.sendToClient("RetRegisterAccount", {
+  SendToClient("RetRegisterAccount", {
     error_code = errorCode,
   })
 end
@@ -67,7 +66,7 @@ function _M.ReqHallMessage(msgTable)
     })
   end
 
-  Cmd.sendToClient("SyncHallMessage", {
+  SendToClient("SyncHallMessage", {
     is_sync = false,
     room_num = roomNum,
     room_list = retList,
@@ -82,7 +81,7 @@ function _M.ReqCreateRoom(msgTable)
     Data.room.addr = newRoom
   end
 
-  Cmd.sendToClient("RetCreateRoom", {
+  SendToClient("RetCreateRoom", {
     error_code = errorCode,
   })
 end
@@ -94,7 +93,7 @@ function _M.ReqJoinRoom(msgTable)
     Data.room.addr = roomAddr
   end
   local errorCode ,selfPos = skynet.call(roomAddr, "lua", "playerJoin", Data.account, skynet.self())
-  Cmd.sendToClient("RetJoinRoom", {
+  SendToClient("RetJoinRoom", {
     error_code = errorCode,
     self_pos = selfPos,
   })
@@ -104,7 +103,7 @@ end
 function _M.ReqRoomInfo(msgTable)
   local roomInfo = skynet.call(Data.room.addr, "lua", "packRoomInfo")
 
-  Cmd.sendToClient("SyncRoomInfo", {
+  SendToClient("SyncRoomInfo", {
     is_sync = false,
     error_code = ERROR_CODE.BASE_SUCESS,
     room_info = roomInfo
@@ -123,7 +122,7 @@ function _M.ReqPlayerAction(msgTable)
   elseif actionCode == ROOM_ACTION.QUIT_ROOM then
     skynet.send(Data.room.addr, "lua", "playerQuit", Data.account.uid)
   elseif actionCode == ROOM_ACTION.CHANGE_MAP then
-    skynet.send(Data.room.addr, "lua", "playerChangeMap", Data.account.uid, 1)
+    skynet.send(Data.room.addr, "lua", "playerChangeMap", Data.account.uid, msgTable.extend)
   end
 end
 

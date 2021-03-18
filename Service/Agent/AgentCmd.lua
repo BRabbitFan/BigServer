@@ -17,34 +17,56 @@ local util = require "Util.SvrUtil"
 local pbmap = require "Util.PbMap"
 
 local Data = require "AgentData"
+local Msg = require "AgentMsg"
 
 local _M = {}
 
 function _M.sendToClient(msgName, msgTable)
-  local msgBytes = pbmap.pack(msgName, msgTable)
-  local sendBytes = string.pack(">s2", msgBytes)
-  socket.write(Data.base.fd, sendBytes)
+  SendToClient(msgName, msgTable)
+end
+
+local function recver(fd)
+  socket.start(fd)
+  fd = fd or Data.base.fd
+  while true do
+    local msgLen = socket.read(fd, 2)
+    if msgLen then
+      local l1, l2 = string.byte(msgLen, 1, 2)
+      msgLen = l1 * 256 + l2
+      local baseBytes = socket.read(fd, msgLen)
+      local msgName, msgTable = pbmap.unpack(baseBytes)
+      util.log("[Agent][Recv]"..msgName.." "..util.tabToStr(msgTable, "block"))
+      local func = Msg[msgName]
+      if func then
+        func(msgTable)
+      end
+    else
+      break
+    end
+  end
+  _M.close(fd)
 end
 
 function _M.start(conf)
-  util.log(" [Agent] [CMD.start] " .. util.tabToStr(conf))
+  util.log("[Agent][Cmd][start]" .. util.tabToStr(conf))
   local base = Data.base
   base.fd = conf.fd
   base.gate = conf.gate
-  skynet.send(SVR.gate, "lua", "forward", base.fd)
+  skynet.call(SVR.gate, "lua", "forward", base.fd)
+  skynet.fork(recver, base.fd)
 end
 
-function _M.close(...)
-  util.log(" [Agent] [CMD.close] ")
+function _M.close(fd)
+  util.log("[Agent][Cmd][close]")
+  fd = fd or Data.base.fd
 
-  local fd = Data.base.fd
+  socket.close(fd)
   skynet.send(SVR.gate, "lua", "unforward", fd)
-
   skynet.send(SVR.login, "lua", "logout", Data.account.uid)
 
   local addr = Data.room.addr
   if addr then
-    skynet.send(addr, "lua", "quitRoom", Data.account)
+    skynet.send(addr, "lua", "playerQuit", Data.account.uid)
   end
 
   skynet.exit()

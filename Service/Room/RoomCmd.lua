@@ -24,7 +24,7 @@ local function chkRoomEmpty()
   local playerList = Data.playerList
   while true do
     skynet.sleep(10)
-    if util.tabLen(Data.playerList) == 0 then
+    if not next(playerList) then
       skynet.send(SVR.hall, "lua", "closeRoom", Data.ROOM_ID)
       skynet.exit()
     end
@@ -33,6 +33,7 @@ end
 
 function _M.start(conf)
   Data.ROOM_ID = conf.roomId
+  Data.mapId = Data.GLOBAL_CONFIG.RaceMap.DEFAULT_MAP
 
   local master = conf.master
   table.insert(Data.playerList, {
@@ -115,6 +116,24 @@ local function getPlayerIndexByUid(uid)
   return false
 end
 
+local function isAllReady()
+  local playerList = Data.playerList
+  local maxPlayerNum = Data.GLOBAL_CONFIG.RoomRole.maxPlayerNum
+
+  local playerNum = 0
+  for _, player in pairs(playerList) do
+    playerNum = playerNum + 1
+    if not player.isReady then
+      return false
+    end
+  end
+
+  if playerNum == maxPlayerNum then
+    return true
+  end
+  return false
+end
+
 function _M.playerReady(uid, isReady)
   local index = getPlayerIndexByUid(uid)
   if not index then
@@ -132,9 +151,16 @@ function _M.playerReady(uid, isReady)
     error_code = ERROR_CODE.BASE_SUCESS,
     room_info = _M.packRoomInfo(),
   })
+
+  if isAllReady() then
+    sendToAll("SyncLoadGame", {
+      -- TODO : 构造SyncLoadGame
+    })
+  end
 end
 
 function _M.playerQuit(uid)
+  util.log("[Room][Cmd][playerQuit]uid->"..uid)
   local index = getPlayerIndexByUid(uid)
   if not index then
     return

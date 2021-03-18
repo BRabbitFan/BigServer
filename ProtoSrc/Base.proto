@@ -106,7 +106,7 @@ message SyncRoomInfo {
 /* C2S 玩家动作 */
 message ReqPlayerAction {
   optional int32 action_code = 1;  // 动作
-  optional RoomPlayerInfo player_info = 2; 
+  optional int32 extend = 2;  // 附加参数 
 }
 /* S2C 返回/同步玩家动作结果 */
 message SyncPlayerAction {

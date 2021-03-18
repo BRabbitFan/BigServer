@@ -1,5 +1,5 @@
 
-‰
+è
 
 Base.protoPacket"7
 BaseMessage
@@ -56,12 +56,11 @@ playerList
 is_sync (RisSync
 
 error_code (R	errorCode-
-	room_info (2.Packet.RoomInfoRroomInfo"k
+	room_info (2.Packet.RoomInfoRroomInfo"J
 ReqPlayerAction
 action_code (R
-actionCode7
-player_info (2.Packet.RoomPlayerInfoR
-playerInfo"k
+actionCode
+extend (Rextend"k
 SyncPlayerAction
 is_sync (RisSync
 action_code (R

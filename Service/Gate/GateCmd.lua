@@ -2,14 +2,15 @@
 -- https://github.com/BRabbitFan
 -- -----------------------------
 -- Author       : BRabbitFan
--- Date         : 2021-03-06 16:12:35
+-- Date         : 2021-03-18 18:07:40
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-08 13:30:31
--- FilePath     : /BigServer/Service/Gate/GateCmd.lua
--- Description  : 网关命令--处理其他服务的消息
+-- LastEditTime : 2021-03-18 18:07:40
+-- FilePath     : /BigServer/Service/GateNew/GateCmd.lua
+-- Description  : 网关--指令
 -- -----------------------------
 
-local gateserver = require "snax.gateserver"
+local skynet = require "skynet"
+local socket = require "skynet.socket"
 
 local util = require "Util.SvrUtil"
 
@@ -17,24 +18,51 @@ local Data = require "GateData"
 
 local _M = {}
 
----Agent准备好后开启链接
----@param agent number 消息源地址(服务)
----@param fd string 对应的socket句柄
-function _M.forward(agent, fd)
-	util.log(" [Gate] [CMD] [forward] agent->"..agent.." fd->"..fd)
-  if next(Data.connection[fd]) then
-		gateserver.openclient(fd)
-	end
+local function newClient(fd)
+  util.log("[Gate][Cmd][newClient] fd->"..fd)
+  -- 检查客户端数量
+  if util.tabLen(Data.connection) >= Data.conf.maxClient then
+    return
+  end
+  -- 开启新Agent
+  local agent = skynet.newservice("Agent")
+  skynet.send(agent, "lua", "start", {
+    gate = skynet.self(),
+    fd = fd,
+  })
+  -- 记录
+  Data.connection[fd] = {
+    fd = fd,
+    agent = agent,
+  }
 end
 
----Agent主动关闭连接
----@param agent number 消息源地址(服务)
+function _M.start(conf)
+  util.log("[Gate][Cmd][start] conf->"..util.tabToStr(conf, "block"))
+  Data.conf = {
+    addr = conf.addr,
+    port = conf.port,
+    maxClient = conf.maxClient,
+    svrName = conf.svrName,
+  }
+
+  util.setSvr(conf.svrName)
+
+  local newFd = socket.listen(conf.addr, conf.port)
+  socket.start(newFd, newClient)
+end
+
+---Agent准备好
 ---@param fd string 对应的socket句柄
-function _M.unforward(agent, fd)
-	util.log(" [Gate] [CMD] [unforward] agent->"..agent.." fd->"..fd)
-	if next(Data.connection[fd]) then
-		gateserver.closeclient(fd)
-	end
+function _M.forward(fd)
+	util.log("[Gate][Cmd][forward] fd->"..fd)
+end
+
+---Agent关闭
+---@param fd string 对应的socket句柄
+function _M.unforward(fd)
+	util.log("[Gate][Cmd][unforward] fd->"..fd)
+	Data.connection[fd] = nil
 end
 
 return _M

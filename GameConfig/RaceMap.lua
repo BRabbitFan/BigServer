@@ -11,9 +11,9 @@
 
 return {
   MAP_LIST = {
-    TEST_MAP_1 = 101,
-    TEST_MAP_2 = 102,
-    TEST_MAP_3 = 103,
+    TEST_MAP_1 = 1,
+    TEST_MAP_2 = 2,
+    TEST_MAP_3 = 3,
   },
-  DEFAULT_MAP = 101,
+  DEFAULT_MAP = 1,
 }

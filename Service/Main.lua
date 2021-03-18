@@ -21,11 +21,11 @@ local function startGate()
 	local gateway_port = skynet.getenv("gateway_port") or 8000
 	local max_client = skynet.getenv("max_client") or 32
 	local gate = skynet.newservice("Gate")
-	skynet.call(gate, "lua", "open" , {
+	skynet.call(gate, "lua", "start", {
+		addr = "0.0.0.0",
 		port = gateway_port,
-		maxclient = max_client,
-		nodelay = true,
-		servername = SVR_NAME.gate,
+		maxClient = max_client,
+		svrName = SVR_NAME.gate,
 	})
 end
 
