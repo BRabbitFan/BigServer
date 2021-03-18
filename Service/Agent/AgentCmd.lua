@@ -20,7 +20,8 @@ local Data = require "AgentData"
 
 local _M = {}
 
-function _M.sendToClient(msgBytes)
+function _M.sendToClient(msgName, msgTable)
+  local msgBytes = pbmap.pack(msgName, msgTable)
   local sendBytes = string.pack(">s2", msgBytes)
   socket.write(Data.base.fd, sendBytes)
 end
@@ -35,17 +36,18 @@ end
 
 function _M.close(...)
   util.log(" [Agent] [CMD.close] ")
-  skynet.send(SVR.login, "lua", "logout", Data.account.uid)
+
   local fd = Data.base.fd
   skynet.send(SVR.gate, "lua", "unforward", fd)
 
-  -- TODO : 关闭连接的时候，退出房间
+  skynet.send(SVR.login, "lua", "logout", Data.account.uid)
+
+  local addr = Data.room.addr
+  if addr then
+    skynet.send(addr, "lua", "quitRoom", Data.account)
+  end
 
   skynet.exit()
-end
-
-function _M.sendSyncHallMessage(msgTable)
-  _M.sendToClient(pbmap.pack("SyncHallMessage", msgTable))
 end
 
 return _M

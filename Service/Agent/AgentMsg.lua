@@ -11,12 +11,12 @@
 
 local skynet = require "skynet"
 
-local pbmap = require "Util.PbMap"
 local util = require "Util.SvrUtil"
 
 local ERROR_CODE = require "GlobalDefine.ErrorCode"
 local SVR = require "GlobalDefine.ServiceName"
 
+local DEFINE = require "AgentDefine"
 local Cmd = require "AgentCmd"
 local Data = require "AgentData"
 
@@ -24,6 +24,7 @@ local _M = {}
 
 -- 登录
 function _M.ReqLoginAccount(msgTable)
+  util.log("[Agent][MSG][ReqLoginAccount]")
   local info = msgTable.login_account
   local errorCode, totalInfo = skynet.call(SVR.login, "lua", "login", info.account, info.password)
 
@@ -35,9 +36,9 @@ function _M.ReqLoginAccount(msgTable)
     account.name = totalInfo.name
   end
 
-  Cmd.sendToClient(pbmap.pack("RetLoginAccount", {
+  Cmd.sendToClient("RetLoginAccount", {
     error_code = errorCode,
-  }))
+  })
 end
 
 -- 注册
@@ -45,9 +46,9 @@ function _M.ReqRegisterAccount(msgTable)
   local info = msgTable.register_account
   local errorCode = skynet.call(SVR.login, "lua", "register", info.account, info.password, info.name)
 
-  Cmd.sendToClient(pbmap.pack("RetRegisterAccount", {
+  Cmd.sendToClient("RetRegisterAccount", {
     error_code = errorCode,
-  }))
+  })
 end
 
 -- 请求大厅信息
@@ -66,7 +67,7 @@ function _M.ReqHallMessage(msgTable)
     })
   end
 
-  Cmd.sendSyncHallMessage({
+  Cmd.sendToClient("SyncHallMessage", {
     is_sync = false,
     room_num = roomNum,
     room_list = retList,
@@ -75,15 +76,15 @@ end
 
 -- 创建房间
 function _M.ReqCreateRoom(msgTable)
-  local errorCode, newRoom = skynet.call(SVR.hall, "lua", "createRoom", Data.account)
+  local errorCode, newRoom = skynet.call(SVR.hall, "lua", "createRoom", Data.account, skynet.self())
 
   if errorCode == ERROR_CODE.BASE_SUCESS then
     Data.room.addr = newRoom
   end
 
-  Cmd.sendToClient(pbmap.pack("RetCreateRoom", {
+  Cmd.sendToClient("RetCreateRoom", {
     error_code = errorCode,
-  }))
+  })
 end
 
 -- 加入房间
@@ -92,39 +93,38 @@ function _M.ReqJoinRoom(msgTable)
   if errorCode == ERROR_CODE.BASE_SUCESS then
     Data.room.addr = roomAddr
   end
-  errorCode = skynet.call(roomAddr, "lua", "playerJoin", Data.account)
-  Cmd.sendToClient(pbmap.pack("RetJoinRoom", {
+  local errorCode ,selfPos = skynet.call(roomAddr, "lua", "playerJoin", Data.account, skynet.self())
+  Cmd.sendToClient("RetJoinRoom", {
     error_code = errorCode,
-  }))
+    self_pos = selfPos,
+  })
 end
 
 -- 请求房间详情
 function _M.ReqRoomInfo(msgTable)
-  local errorCode, roomInfo = skynet.call(Data.room.addr, "lua", "getRoomInfo")
+  local roomInfo = skynet.call(Data.room.addr, "lua", "packRoomInfo")
 
-  local retMsg = {
+  Cmd.sendToClient("SyncRoomInfo", {
     is_sync = false,
-    error_code = errorCode,
-    room_info = {
-      room_id = roomInfo.ROOM_ID,
-      map_id = roomInfo.mapId,
-      player_list = {},
-    }
-  }
-  local player_list = retMsg.room_info.player_list
-  for _, player in pairs(roomInfo.playerList) do
-    table.insert(player_list, {
-      account_info = {
-        account = player.account,
-        name = player.name,
-      },
-      room_pos = tostring(player.pos),
-      is_ready = player.isReady,
-      is_master = player.isMaster,
-    })
-  end
+    error_code = ERROR_CODE.BASE_SUCESS,
+    room_info = roomInfo
+  })
+end
 
-  Cmd.sendToClient(pbmap.pack("SyncRoomInfo", retMsg))
+-- 玩家房间内动作
+function _M.ReqPlayerAction(msgTable)
+  local actionCode = msgTable.action_code
+  local ROOM_ACTION = DEFINE.ROOM_ACTION
+
+  if actionCode == ROOM_ACTION.GET_READY then
+    skynet.send(Data.room.addr, "lua", "playerReady", Data.account.uid, true)
+  elseif actionCode == ROOM_ACTION.UN_READY then
+    skynet.send(Data.room.addr, "lua", "playerReady", Data.account.uid, false)
+  elseif actionCode == ROOM_ACTION.QUIT_ROOM then
+    skynet.send(Data.room.addr, "lua", "playerQuit", Data.account.uid)
+  elseif actionCode == ROOM_ACTION.CHANGE_MAP then
+    skynet.send(Data.room.addr, "lua", "playerChangeMap", Data.account.uid, 1)
+  end
 end
 
 return _M

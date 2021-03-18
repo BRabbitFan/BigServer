@@ -10,6 +10,7 @@
 -- -----------------------------
 
 local skynet = require "skynet"
+local sharedata = require "skynet.sharedata"
 
 local util = require "Util.SvrUtil"
 local pbmap = require "Util.PbMap"
@@ -18,6 +19,9 @@ local Data = require "RoomData"
 local Cmd = require "RoomCmd"
 
 skynet.start(function()
+
+  Data.GLOBAL_CONFIG = sharedata.query("CONF")
+
   skynet.dispatch("lua", function(session, source, cmd, ...)
     local func = Cmd[cmd]
     if func then

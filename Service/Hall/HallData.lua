@@ -27,8 +27,8 @@ return  {
   ---房间列表
   ---@type table<roomId, table<roomId|playerNum|mapId|roomAddr, ...>>
   roomList = {
-    -- [1] = {
-    --   roomId = 1;      ---房间id
+    -- [1234] = {
+    --   roomId = 1234;      ---房间id
     --   playerNum = 2;   ---玩家数量
     --   mapId = 3;       ---地图id
     --   roomAddr = xxx;  ---房间服务地址

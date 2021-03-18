@@ -31,7 +31,7 @@ end
 ---@return integer roomNum 房间数量
 ---@return table roomList 房间列表(HallData.info.roomList)
 function _M.getHallInfo()
-  return ERROR_CODE.BASE_SUCESS, #(Data.roomList), Data.roomList
+  return ERROR_CODE.BASE_SUCESS, util.tabLen(Data.roomList), Data.roomList
 end
 
 ---获得新的随机房间号
@@ -58,7 +58,7 @@ end
 ---@param account table 创建房间的玩家账号信息
 ---@return number errorCode 错误码
 ---@return number roomAddr 房间服务地址
-function _M.createRoom(account)
+function _M.createRoom(account, agent)
   local info = Data.info
   local roomList = Data.roomList
   -- 检查房间数是否已满
@@ -71,6 +71,7 @@ function _M.createRoom(account)
   skynet.call(newRoom, "lua", "start", {
     roomId = newRoomId,
     master = account,
+    agent = agent,
   })
   -- 记录房间
   roomList[newRoomId] = {

@@ -8,19 +8,34 @@ local util = require "Util.BaseUtil"
 
 pb.loadfile "Proto/Base.pb"
 
+-- local tab = {
+--   is_sync = false,
+--   room_num = 1,
+--   room_list = {},
+-- }
+
+-- table.insert(tab.room_list, {
+--   room_id = 5542,
+--   player_num = 1,
+--   map_id = 1,
+-- })
+
+-- local bytes = pb.encode("Packet.SyncHallMessage", tab)
+-- local table = pb.decode("Packet.SyncHallMessage", bytes)
+
+-- print(util.tabToStr(table, "block"))
+
 local tab = {
-  is_sync = false,
-  room_num = 1,
-  room_list = {},
+  [1] = {name = "1"},
+  [2] = {name = "2"},
+  [3] = {name = "3"},
+  [4] = {name = "4"},
 }
 
-table.insert(tab.room_list, {
-  room_id = 5542,
-  player_num = 1,
-  map_id = 1,
-})
+print(util.tabLen(tab), util.tabToStr(tab, "block"))
 
-local bytes = pb.encode("Packet.SyncHallMessage", tab)
-local table = pb.decode("Packet.SyncHallMessage", bytes)
+for key, value in pairs(tab) do
+    tab[key] = nil
+end
 
-print(util.tabToStr(table, "block"))
+print(util.tabLen(tab), util.tabToStr(tab, "block"))

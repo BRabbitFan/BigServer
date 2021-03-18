@@ -69,11 +69,12 @@ end
 ---@param sz number 消息长度
 ---msg + sz = 未解包的消息(c指针)
 function _M.message(fd, msg, sz)
-  util.log(" [Gate] [handler.message] "..fd)
+  -- util.log(" [Gate] [handler.message] "..fd)
 
   local agent = Data.connection[fd].agent
   if agent then
-    skynet.send(agent, "client", msg, sz)
+    -- skynet.send(agent, "client", msg, sz)
+    skynet.redirect(agent, 1, "client", 0, msg, sz)
   end
 end
 

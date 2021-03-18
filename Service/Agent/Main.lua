@@ -17,7 +17,17 @@ local pbmap = require "Util.PbMap"
 local util = require "Util.SvrUtil"
 
 local Cmd = require "AgentCmd"
+-- require "Hall.AgentLoginCmd"
+-- require "Hall.AgentHallCmd"
+-- require "Hall.AgentRoomCmd"
+-- require "Hall.AgentRaceCmd"
+
 local Msg = require "AgentMsg"
+-- require "Hall.AgentLoginMsg"
+-- require "Hall.AgentHallMsg"
+-- require "Hall.AgentRoomMsg"
+-- require "Hall.AgentRaceMsg"
+
 local Data = require "AgentData"
 
 skynet.register_protocol({
@@ -39,10 +49,10 @@ skynet.start(function()
   skynet.dispatch("client", function(session, source, ...)
     local msgName, msgTable = pbmap.unpack(...)
     util.log(msgName.." "..util.tabToStr(msgTable, "block"))
-    local func = Msg[msgName]
-    if func then
-      func(msgTable)  -- 网关来的消息不用返回
-    end
+    -- local func = Msg[msgName]
+    -- if func then
+    --   func(msgTable)  -- 网关来的消息不用返回
+    -- end
   end)
 
 end)

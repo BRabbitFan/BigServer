@@ -10,6 +10,10 @@
 -- -----------------------------
 
 return  {
+
+  ---全局配置
+  GLOBAL_CONFIG = {};
+
   ---@type integer
   ROOM_ID = nil,  -- 房间号
 
@@ -26,6 +30,7 @@ return  {
   --     pos = 2,
   --     isReady = false,
   --     isMaster = true,
+  --     agent = xxx,
   --   }, ...
   }
 }

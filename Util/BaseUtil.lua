@@ -42,4 +42,15 @@ function _M.strToTab(str)
   return tab
 end
 
+---获得table的长度
+---@param table any
+---@return integer len
+function _M.tabLen(table)
+  local len = 0
+  for _, _ in pairs(table) do
+    len = len + 1
+  end
+  return len
+end
+
 return _M

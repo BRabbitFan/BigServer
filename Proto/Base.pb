@@ -1,5 +1,5 @@
 
-Õ
+‰
 
 Base.protoPacket"7
 BaseMessage
@@ -29,18 +29,20 @@ player_num (R	playerNum
 is_sync (RisSync
 room_num (RroomNum1
 	room_list (2.Packet.BaseRoomInfoRroomList"
-ReqCreateRoom".
+ReqCreateRoom"G
 RetCreateRoom
 
-error_code (R	errorCode"&
+error_code (R	errorCode
+room_id (RroomId"&
 ReqJoinRoom
-room_id (RroomId",
+room_id (RroomId"G
 RetJoinRoom
 
-error_code (R	errorCode"—
+error_code (R	errorCode
+self_pos (RselfPos"—
 RoomPlayerInfo2
 account_info (2.Packet.AccountRaccountInfo
-room_pos (	RroomPos
+room_pos (RroomPos
 	is_master (RisMaster
 is_ready (RisReady"s
 RoomInfo

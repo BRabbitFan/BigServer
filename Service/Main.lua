@@ -70,6 +70,7 @@ local function startHall()
 end
 
 skynet.start(function()
+	skynet.newservice("debug_console", 12345)
 	startGate()
 	startDataCenter()
 	startDatabase()

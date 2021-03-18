@@ -2,7 +2,7 @@
 -- skynet配置
 
 -- preload = ""	                -- 启动前运行脚本
-thread = 4                      -- 工作线程数
+thread = 16                     -- 工作线程数
 --logger = "./Log/game.log"       -- 日志服务
 --logpath = "./"                  -- 日志路径
 harbor = 1                      -- 节点编号
