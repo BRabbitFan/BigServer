@@ -144,12 +144,12 @@ message SyncStartGame {}
 
 /* 方位信息 */
 message Position {
-  optional int32 pos_x = 1;  // 位置 - x轴
-  optional int32 pos_y = 2;  // 位置 - y轴
-  optional int32 pos_z = 3;  // 位置 - z轴
-  optional int32 rot_x = 4;  // 方向 - x轴
-  optional int32 rot_y = 5;  // 方向 - y轴
-  optional int32 rot_z = 6;  // 方向 - z轴
+  optional float pos_x = 1;  // 位置 - x轴
+  optional float pos_y = 2;  // 位置 - y轴
+  optional float pos_z = 3;  // 位置 - z轴
+  optional float rot_x = 4;  // 方向 - x轴
+  optional float rot_y = 5;  // 方向 - y轴
+  optional float rot_z = 6;  // 方向 - z轴
 }
 
 /* C2S 汇报自身方位信息 */
@@ -164,10 +164,10 @@ message SyncPosition {
 
 /* C2S 汇报游戏状态 */
 message ReportGameState {
-  optional int32 game_state_code = 1;  // 游戏状态码 : 0->进行中 ; 1->完成游戏 ; 2->中途退出
+  optional int32 game_state_code = 1;  // 游戏状态码
 }
 /* S2C 同步游戏状态 */
 message SyncGameState {
   optional GamePlayerInfo player = 1;  // 同步的玩家信息
-  optional int32 game_state_code = 2;  // 游戏状态码 : 0->进行中 ; 1->完成游戏 ; 2->中途退出
+  optional int32 game_state_code = 2;  // 游戏状态码
 }

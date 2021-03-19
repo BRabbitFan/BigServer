@@ -33,7 +33,7 @@ end
 
 function _M.start(conf)
   Data.ROOM_ID = conf.roomId
-  Data.mapId = Data.GLOBAL_CONFIG.RaceMap.DEFAULT_MAP
+  Data.mapId = Data.GLOBAL_CONFIG.RaceConf.MAP_LIST.DEFAULT_MAP
 
   local master = conf.master
   table.insert(Data.playerList, {
@@ -87,6 +87,13 @@ function _M.playerJoin(player, agent)
     isMaster = false,
     agent = agent,
   })
+
+  sendToAll("SyncRoomInfo", {
+    is_sync = true,
+    error_code = ERROR_CODE.BASE_SUCESS,
+    room_info = _M.packRoomInfo(),
+  })
+
   return ERROR_CODE.BASE_SUCESS, newPos
 end
 
@@ -134,6 +141,22 @@ local function isAllReady()
   return false
 end
 
+local function startRace()
+  -- 开启新游戏
+  local newRace = skynet.newservice("Race")
+  skynet.send(newRace, "lua", "start", {
+    mapId = Data.mapId,
+    playerList = Data.playerList,
+  })
+  -- 通知Agent游戏服务地址
+  for _, player in pairs(Data.playerList) do
+    skynet.send(player.agent, "lua", "initRace", newRace)
+  end
+  -- 开启游戏后房间销毁
+  skynet.send(SVR.hall, "lua", "closeRoom", Data.ROOM_ID)
+  skynet.exit()
+end
+
 function _M.playerReady(uid, isReady)
   local index = getPlayerIndexByUid(uid)
   if not index then
@@ -153,9 +176,7 @@ function _M.playerReady(uid, isReady)
   })
 
   if isAllReady() then
-    sendToAll("SyncLoadGame", {
-      -- TODO : 构造SyncLoadGame
-    })
+    startRace()
   end
 end
 

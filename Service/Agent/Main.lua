@@ -22,6 +22,10 @@ local Data = require "AgentData"
 
 function SendToClient(msgName, msgTable)
   local msgBytes = pbmap.pack(msgName, msgTable)
+
+  local name, table = pbmap.unpack(msgBytes)
+  util.log("[Agent][Send]"..name.." "..util.tabToStr(table, "block"))
+
   local sendBytes = string.pack(">s2", msgBytes)
   socket.write(Data.base.fd, sendBytes)
 end

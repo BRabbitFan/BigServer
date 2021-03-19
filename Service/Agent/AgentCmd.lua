@@ -72,4 +72,13 @@ function _M.close(fd)
   skynet.exit()
 end
 
+function _M.initRace(race)
+  Data.room = {}
+  Data.race.addr = race
+end
+
+function _M.raceFinish(...)
+  
+end
+
 return _M

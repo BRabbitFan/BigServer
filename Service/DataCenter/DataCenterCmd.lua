@@ -82,4 +82,20 @@ function _M.setPlayerLogout(uid)
   return ERROR_CODE.BASE_SUCESS
 end
 
+function _M.sendToOnlinePlayers(uidList, msgName, msgTable)
+  local uidToAgent = Data.UidToAgent
+  for _, uid in pairs(uidList) do
+    local agent = uidToAgent[uid]
+    if agent then
+      skynet.send(agent, "lua", "sendToClient", msgName, msgTable)
+    end
+  end
+end
+
+function _M.sendToAllOnlinePlayer(msgName, msgTable)
+  for uid, agent in pairs(Data.UidToAgent) do
+    skynet.send(agent, "lua", "sendToClient", msgName, msgTable)
+  end
+end
+
 return _M

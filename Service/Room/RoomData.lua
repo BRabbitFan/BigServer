@@ -21,7 +21,7 @@ return  {
   mapId = nil,  -- 地图Id
 
   ---玩家列表
-  ---@type list<_, table<name|pos|isReady|isMaster, ...>>
+  ---@type list<_, table<uid|account|name|pos|isReady|isMaster|agent, ...>>
   playerList = {
   --   [1] = {
   --     uid = 100,

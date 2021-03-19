@@ -21,6 +21,8 @@ local Data = require "AgentData"
 
 local _M = {}
 
+------------------------------ Login ------------------------------
+
 -- 登录
 function _M.ReqLoginAccount(msgTable)
   util.log("[Agent][MSG][ReqLoginAccount]")
@@ -49,6 +51,8 @@ function _M.ReqRegisterAccount(msgTable)
     error_code = errorCode,
   })
 end
+
+------------------------------ Hall ------------------------------
 
 -- 请求大厅信息
 function _M.ReqHallMessage(msgTable)
@@ -99,6 +103,8 @@ function _M.ReqJoinRoom(msgTable)
   })
 end
 
+------------------------------ Room ------------------------------
+
 -- 请求房间详情
 function _M.ReqRoomInfo(msgTable)
   local roomInfo = skynet.call(Data.room.addr, "lua", "packRoomInfo")
@@ -112,18 +118,45 @@ end
 
 -- 玩家房间内动作
 function _M.ReqPlayerAction(msgTable)
+  local roomAddr = Data.room.addr
+  if not roomAddr then
+    return
+  end
+
   local actionCode = msgTable.action_code
   local ROOM_ACTION = DEFINE.ROOM_ACTION
 
   if actionCode == ROOM_ACTION.GET_READY then
-    skynet.send(Data.room.addr, "lua", "playerReady", Data.account.uid, true)
+    skynet.send(roomAddr, "lua", "playerReady", Data.account.uid, true)
   elseif actionCode == ROOM_ACTION.UN_READY then
-    skynet.send(Data.room.addr, "lua", "playerReady", Data.account.uid, false)
+    skynet.send(roomAddr, "lua", "playerReady", Data.account.uid, false)
   elseif actionCode == ROOM_ACTION.QUIT_ROOM then
-    skynet.send(Data.room.addr, "lua", "playerQuit", Data.account.uid)
+    skynet.send(roomAddr, "lua", "playerQuit", Data.account.uid)
   elseif actionCode == ROOM_ACTION.CHANGE_MAP then
-    skynet.send(Data.room.addr, "lua", "playerChangeMap", Data.account.uid, msgTable.extend)
+    skynet.send(roomAddr, "lua", "playerChangeMap", Data.account.uid, msgTable.extend)
   end
+end
+
+------------------------------ Race ------------------------------
+
+-- 游戏加载完毕
+function _M.ReportLoadGame(msgTable)
+  skynet.send(Data.race.addr, "lua", "playerLoadFinish", Data.account.uid)
+end
+
+-- 请求开始游戏
+function _M.ReqStartGame(msgTable)
+  skynet.send(Data.race.addr, "lua", "playerLoadFinish", Data.account.uid)
+end
+
+-- 汇报自身方位信息
+function _M.ReportPosition(msgTable)
+  skynet.send(Data.race.addr, "lua", "playerPosition", Data.account.uid, msgTable)
+end
+
+-- 汇报游戏状态
+function _M.ReportGameState(msgTable)
+  skynet.send(Data.race.addr, "lua", "playerGameState", Data.account.uid, msgTable.game_state_code)
 end
 
 return _M

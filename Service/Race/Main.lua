@@ -9,3 +9,22 @@
 -- Description  : 游戏服务--入口
 -- -----------------------------
 
+local skynet = require "skynet"
+local sharedata = require "skynet.sharedata"
+
+local util = require "Util.SvrUtil"
+
+local Cmd = require "RaceCmd"
+local Data = require "RaceData"
+
+skynet.start(function()
+
+  Data.GLOBAL_CONFIG = sharedata.query("CONF")
+
+  skynet.dispatch("lua", function(session, source, cmd, ...)
+    local func = Cmd[cmd]
+    if func then
+      skynet.retpack(func(...))
+    end
+  end)
+end)

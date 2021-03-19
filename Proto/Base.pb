@@ -81,12 +81,12 @@ playerList"=
 ReqStartGame"
 SyncStartGame"ˆ
 Position
-pos_x (RposX
-pos_y (RposY
-pos_z (RposZ
-rot_x (RrotX
-rot_y (RrotY
-rot_z (RrotZ">
+pos_x (RposX
+pos_y (RposY
+pos_z (RposZ
+rot_x (RrotX
+rot_y (RrotY
+rot_z (RrotZ">
 ReportPosition,
 position (2.Packet.PositionRposition"l
 SyncPosition.

@@ -11,8 +11,6 @@
 
 local pb = require "pb"
 
-local util = require "Util.BaseUtil"
-
 local _M = {}
 
 local PB_SRC = "Proto/"         -- pb文件路径
@@ -42,10 +40,7 @@ end
 ---@param msgTable table 内层消息(table格式)
 ---@return string baseBytes 外层消息(bytes格式)
 function _M.pack(msgName, msgTable)
-  -- print(msgName, util.tabToStr(msgTable, "block"))
   local msgBytes = pb.encode(PACKET..msgName, msgTable)
-  local tab = pb.decode(PACKET..msgName, msgBytes)
-  print(msgName, util.tabToStr(tab, "block"))
 
   local BaseTable = {
     name = msgName,

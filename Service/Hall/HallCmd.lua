@@ -13,6 +13,7 @@ local skynet = require "skynet"
 
 local util = require "Util.SvrUtil"
 
+local SVR = require "GameConfig.ServiceName"
 local ERROR_CODE = require "GlobalDefine.ErrorCode"
 
 local Data = require "HallData"
@@ -24,6 +25,35 @@ local _M = {}
 function _M.start(conf)
   util.setSvr(conf.svrName)
   Data.info.roomNum = 0;
+end
+
+---打包消息SyncHallMessage
+---@return table SyncHallMessage
+local function packSyncHallMessage()
+  local msg = {
+    is_sync = true,
+    room_num = util.tabLen(Data.roomList),
+    room_list = {},
+  }
+
+  local msgRoomList = msg.room_list
+  local DataRoomList = Data.roomList
+  for _, room in pairs(DataRoomList) do
+    table.insert(msgRoomList, {
+      room_id = room.roomId,
+      player_num = room.playerNum,
+      map_id = room.mapId,
+    })
+  end
+
+  return msg
+end
+
+---将消息发送给全体在线玩家
+---@param msgName string 消息名
+---@param msgTable table 消息table
+local function sendToAllOnlinePlayer(msgName, msgTable)
+  skynet.send(SVR.dataCenter, "lua", "sendToAllOnlinePlayer", msgName, msgTable)
 end
 
 ---查询大厅信息
@@ -80,6 +110,8 @@ function _M.createRoom(account, agent)
     mapId = 1,
     roomAddr = newRoom,
   }
+  -- 同步给全体玩家
+  sendToAllOnlinePlayer("SyncHallMessage", packSyncHallMessage())
   -- 返回新房间
   return ERROR_CODE.BASE_SUCESS, newRoom
 end
@@ -99,6 +131,10 @@ function _M.joinRoom(roomId)
   end
 
   room.playerNum = room.playerNum + 1
+
+  -- 同步给全体玩家
+  sendToAllOnlinePlayer("SyncHallMessage", packSyncHallMessage())
+
   return ERROR_CODE.BASE_SUCESS, room.roomAddr
 end
 
@@ -115,6 +151,10 @@ function _M.quitRoom(roomId)
   if room.playerNum <= 0 then  -- 房间没人则关闭 (Room会请求closeRoom, 正常不应该进入此分支)
     _M.closeRoom(roomId)
   end
+
+  -- 同步给全体玩家
+  sendToAllOnlinePlayer("SyncHallMessage", packSyncHallMessage())
+
   return ERROR_CODE.BASE_SUCESS
 end
 
@@ -127,6 +167,10 @@ function _M.closeRoom(roomId)
   end
 
   Data.roomList[roomId] = nil
+
+  -- 同步给全体玩家
+  sendToAllOnlinePlayer("SyncHallMessage", packSyncHallMessage())
+
   return ERROR_CODE.BASE_SUCESS
 end
 

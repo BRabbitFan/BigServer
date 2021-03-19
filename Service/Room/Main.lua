@@ -13,7 +13,6 @@ local skynet = require "skynet"
 local sharedata = require "skynet.sharedata"
 
 local util = require "Util.SvrUtil"
-local pbmap = require "Util.PbMap"
 
 local Data = require "RoomData"
 local Cmd = require "RoomCmd"

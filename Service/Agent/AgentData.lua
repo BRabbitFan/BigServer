@@ -46,7 +46,7 @@ return {
   ---游戏信息
   ---@type table
   race = {
-
+    addr = nil,
   },
 
 }
