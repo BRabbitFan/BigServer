@@ -78,6 +78,9 @@ end
 ---设置玩家登出状态
 ---@param uid integer uid
 function _M.setPlayerLogout(uid)
+  if not uid then
+    return
+  end
   Data.UidToAgent[uid] = nil
   return ERROR_CODE.BASE_SUCESS
 end

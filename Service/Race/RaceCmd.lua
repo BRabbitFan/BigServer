@@ -82,7 +82,6 @@ function _M.start(conf)
       },
     })
   end
-  print("sendToAll", util.tabToStr(msg, "block"))
   sendToAll("SyncLoadGame", msg)
 end
 

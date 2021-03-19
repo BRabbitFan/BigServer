@@ -75,6 +75,7 @@ function _M.register(source, account, password, name)
   elseif errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode, result
   end
+  skynet.call(SVR.dataCenter, "lua", "setPlayerRegister", tostring(account))
   return ERROR_CODE.BASE_SUCESS
 end
 
