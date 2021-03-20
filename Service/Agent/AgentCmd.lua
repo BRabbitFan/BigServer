@@ -12,9 +12,12 @@
 local skynet = require "skynet"
 local socket = require "skynet.socket"
 
-local SVR = require "GlobalDefine.ServiceName"
 local util = require "Util.SvrUtil"
 local pbmap = require "Util.PbMap"
+
+local SVR = require "GlobalDefine.ServiceName"
+
+local RACE_STATE = require("Race.RaceDefine").STATE
 
 local Data = require "AgentData"
 local Msg = require "AgentMsg"
@@ -35,7 +38,9 @@ local function recver(fd)
       msgLen = l1 * 256 + l2
       local baseBytes = socket.read(fd, msgLen)
       local msgName, msgTable = pbmap.unpack(baseBytes)
-      util.log("[Agent][Recv]"..msgName.." "..util.tabToStr(msgTable, "block"))
+      if msgName ~= "ReportPosition" then
+        util.log("[Agent][Recv]"..msgName.." "..util.tabToStr(msgTable, "block"))
+      end
       local func = Msg[msgName]
       if func then
         func(msgTable)
@@ -58,16 +63,27 @@ end
 
 function _M.close(fd)
   util.log("[Agent][Cmd][close]")
+
   fd = fd or Data.base.fd
+  local uid = Data.account.uid or nil
 
   socket.close(fd)
   skynet.send(SVR.gate, "lua", "unforward", fd)
-  skynet.send(SVR.login, "lua", "logout", Data.account.uid)
+  skynet.send(SVR.login, "lua", "logout", uid)
 
-  local addr = Data.room.addr
-  if addr then
-    skynet.send(addr, "lua", "playerQuit", Data.account.uid)
-  end
+  repeat
+    local room = Data.room.addr
+    if room then
+      skynet.send(room, "lua", "playerQuit", uid)
+      break
+    end
+
+    local race = Data.race.addr
+    if race then
+      skynet.send(race, "lua", "playerGameState", uid, RACE_STATE.OFFLINE)
+      break
+    end
+  until true
 
   skynet.exit()
 end
@@ -77,8 +93,8 @@ function _M.initRace(race)
   Data.race.addr = race
 end
 
-function _M.raceFinish(...)
-  
+function _M.raceFinish()
+  Data.race = {}
 end
 
 return _M

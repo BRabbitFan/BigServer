@@ -1,8 +1,8 @@
-local Data = require "DataCenterData"
+local Data = require "HallData"
 local util = require "Util.SvrUtil"
 
-local Cmd = require "DataCenterCmd"
+-- local Cmd = require "DataCenterCmd"
 
-Cmd.setPlayerRegister("aaa")
+-- Cmd.setPlayerRegister("aaa")
 
 print(util.tabToStr(Data, "block"))

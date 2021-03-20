@@ -24,7 +24,9 @@ function SendToClient(msgName, msgTable)
   local msgBytes = pbmap.pack(msgName, msgTable)
 
   local name, table = pbmap.unpack(msgBytes)
-  util.log("[Agent][Send]"..name.." "..util.tabToStr(table, "block"))
+  if name ~= "SyncPosition" then
+    util.log("[Agent][Send]"..name.." "..util.tabToStr(table, "block"))
+  end
 
   local sendBytes = string.pack(">s2", msgBytes)
   socket.write(Data.base.fd, sendBytes)

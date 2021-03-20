@@ -58,7 +58,7 @@ end
 function _M.ReqHallMessage(msgTable)
   local errorCode, roomNum, roomList = skynet.call(SVR.hall, "lua", "getHallInfo")
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
-    return -- TODO
+    return
   end
 
   local retList = {}
@@ -141,22 +141,38 @@ end
 
 -- 游戏加载完毕
 function _M.ReportLoadGame(msgTable)
-  skynet.send(Data.race.addr, "lua", "playerLoadFinish", Data.account.uid)
+  local race = Data.race.addr
+  if not race then
+    return
+  end
+  skynet.send(race, "lua", "playerLoadFinish", Data.account.uid)
 end
 
 -- 请求开始游戏
 function _M.ReqStartGame(msgTable)
-  skynet.send(Data.race.addr, "lua", "playerLoadFinish", Data.account.uid)
+  local race = Data.race.addr
+  if not race then
+    return
+  end
+  skynet.send(race, "lua", "playerLoadFinish", Data.account.uid)
 end
 
 -- 汇报自身方位信息
 function _M.ReportPosition(msgTable)
-  skynet.send(Data.race.addr, "lua", "playerPosition", Data.account.uid, msgTable)
+  local race = Data.race.addr
+  if not race then
+    return
+  end
+  skynet.send(race, "lua", "playerPosition", Data.account.uid, msgTable)
 end
 
 -- 汇报游戏状态
 function _M.ReportGameState(msgTable)
-  skynet.send(Data.race.addr, "lua", "playerGameState", Data.account.uid, msgTable.game_state_code)
+  local race = Data.race.addr
+  if not race then
+    return
+  end
+  skynet.send(race, "lua", "playerGameState", Data.account.uid, msgTable.game_state_code)
 end
 
 return _M

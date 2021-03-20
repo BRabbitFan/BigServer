@@ -158,6 +158,20 @@ function _M.quitRoom(roomId)
   return ERROR_CODE.BASE_SUCESS
 end
 
+function _M.changeMap(roomId, mapId)
+  local room = Data.roomList[roomId] or nil
+  if not room then
+    return ERROR_CODE.HALL_ROOM_NOT_EXISTS
+  end
+
+  if room.mapId == mapId then
+    return
+  end
+
+  room.mapId = mapId
+  sendToAllOnlinePlayer("SyncHallMessage", packSyncHallMessage())
+end
+
 ---关闭房间
 ---@param roomId integer 要关闭的房间
 ---@return number errorCode 错误码

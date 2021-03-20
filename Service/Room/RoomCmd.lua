@@ -215,6 +215,7 @@ function _M.playerChangeMap(uid, mapId)
     error_code = ERROR_CODE.BASE_SUCESS,
     room_info = _M.packRoomInfo(),
   })
+  skynet.send(SVR.hall, "lua", "changeMap", Data.ROOM_ID, Data.mapId)
 end
 
 ---打包RoomInfo消息 (protobuf)

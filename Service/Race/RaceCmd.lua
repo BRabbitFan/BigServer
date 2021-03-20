@@ -10,6 +10,7 @@
 -- -----------------------------
 
 local skynet = require "skynet"
+local stateQueue = require("skynet.queue")()  -- 状态更新队列, 防止乱序
 
 local util = require "Util.SvrUtil"
 
@@ -22,7 +23,6 @@ local _M = {}
 
 local function sendToAll(msgName, msgTable)
   for _, player in pairs(Data.playerList) do
-    print("player", player.name)
     skynet.send(player.agent, "lua", "sendToClient", msgName, msgTable)
   end
 end
@@ -49,7 +49,7 @@ end
 
 function _M.start(conf)
   -- 初始化数据
-  Data.mapId = conf.mapId
+  Data.MAP_ID = conf.mapId
   local playerList = Data.playerList
   for _, player in pairs(conf.playerList) do
     table.insert(playerList, {
@@ -66,7 +66,7 @@ function _M.start(conf)
   -- 通知所有玩家
   local msg = {
     game_info = {
-      map_id = Data.mapId,
+      map_id = Data.MAP_ID,
       player_list = {},
     },
   }
@@ -88,7 +88,7 @@ end
 local function findPlayerByUid(uid)
   for _, player in pairs(Data.playerList) do
     if player.uid == uid then
-      return ERROR_CODE.BASE_FAILED_WITH_TAB, player
+      return ERROR_CODE.BASE_SUCESS_WITH_TAB, player
     end
   end
   return ERROR_CODE.BASE_FAILED
@@ -106,16 +106,17 @@ end
 
 function _M.playerLoadFinish(uid)
   local errorCode, player = findPlayerByUid(uid)
-  if errorCode ~= ERROR_CODE.BASE_FAILED_WITH_TAB then
+  if errorCode ~= ERROR_CODE.BASE_SUCESS_WITH_TAB then
     return
   end
-  player.state = DEFINE.STATE.READY
+  local STATE = DEFINE.STATE
+  player.state = STATE.READY
   -- 所有玩家加载完毕则开始比赛
   if not isAllLoadFinish() then
     return
   end
   for _, player in pairs(Data.playerList) do
-    player.start = DEFINE.STATE.GAMING
+    player.state = STATE.GAMING
   end
   sendToAll("SyncStartGame", {})
 end
@@ -123,12 +124,18 @@ end
 function _M.playerPosition(uid, PositionTable)
   -- 找到上报的玩家
   local errorCode, reporter = findPlayerByUid(uid)
-  if errorCode ~= ERROR_CODE.BASE_FAILED_WITH_TAB then
+  if errorCode ~= ERROR_CODE.BASE_SUCESS_WITH_TAB then
     return
   end
   -- 向其他玩家同步
   for _, player in pairs(Data.playerList) do
-    if player.uid ~= uid then
+    repeat
+      if player.uid == uid then
+        break
+      end
+      if player.state ~= DEFINE.STATE.GAMING then
+        break
+      end
       skynet.send(player.agent, "lua", "sendToClient", "SyncPosition", {
         position = PositionTable.position,
         player = {
@@ -140,28 +147,60 @@ function _M.playerPosition(uid, PositionTable)
           },
         },
       })
+    until true
+  end
+end
+
+local function finishGame()
+  print("finish game")
+  for _, player in pairs(Data.playerList) do
+    skynet.send(player.agent, "lua", "raceFinish")
+  end
+  skynet.exit()
+end
+
+local function isAllOffline()
+  local STATE = DEFINE.STATE
+  for _, player in pairs(Data.playerList) do
+    if player.state ~= STATE.OFFLINE then
+      return false
+    end
+  end
+  return true
+end
+
+local function playerGameState(uid, stateCode)
+  util.log("[Race][Cmd][playerGameState]uid->"..tostring(uid).." stateCode->"..tostring(stateCode))
+  local errorCode, player = findPlayerByUid(uid)
+  if errorCode ~= ERROR_CODE.BASE_SUCESS_WITH_TAB then
+    return
+  end
+  player.state = stateCode
+
+  sendToAll("SyncGameState", {
+    game_state_code = stateCode,
+    player = {
+      game_pos = player.pos,
+      color_id = player.colorId,
+      account_info = {
+        name = player.name,
+        account = player.account,
+      },
+    },
+  })
+
+  local STATE = DEFINE.STATE
+  if stateCode == STATE.FINISH then
+    finishGame()
+  elseif stateCode == STATE.OFFLINE then
+    if isAllOffline() then
+      finishGame()
     end
   end
 end
 
-local function finishGame(player)
-  print("player finish game, name->", player.name)
-end
-
-local function playerOvertime(player)
-  print("player overtime, name->", player.name)
-end
-
 function _M.playerGameState(uid, stateCode)
-  local player = findPlayerByUid(uid)
-  player.start = stateCode
-
-  local STATE = DEFINE.STATE
-  if stateCode == STATE.FINISH then
-    finishGame(player)
-  elseif stateCode == STATE.OVERTIME then
-    playerOvertime(player)
-  end
+  stateQueue(playerGameState, uid, stateCode)
 end
 
 return _M
