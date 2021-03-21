@@ -21,12 +21,14 @@ local _M = {}
 ---启动DataCenter
 ---@param conf table 配置表
 function _M.start(conf)
+  util.log("[DataCenter][Cmd][start] conf->"..util.tabToStr(conf, "block"))
   util.setSvr(conf.svrName)
 end
 
 ---初始化用户列表
 ---@param accountList table<account, true> account列表
 function _M.initAccountList(accountList)
+  util.log("[DataCenter][Cmd][initAccountList] accountList->"..util.tabToStr(accountList))
   Data.AccountList = accountList
 end
 
@@ -34,6 +36,7 @@ end
 ---@param account string 账户
 ---@return integer errorCode 错误码
 function _M.chkIsRegisterByAccount(account)
+  util.log("[DataCenter][Cmd][chkIsRegisterByAccount] account->"..tostring(account))
   if Data.AccountList[account] then
     return ERROR_CODE.BASE_SUCESS
   else
@@ -45,6 +48,7 @@ end
 ---@param uid integer uid
 ---@return integer errorCode 错误码
 function _M.chkIsLoginByUid(uid)
+  util.log("[DataCenter][Cmd][chkIsLoginByUid] uid->"..tostring(uid))
   if Data.UidToAgent[uid] then
     return ERROR_CODE.BASE_SUCESS
   else
@@ -56,6 +60,7 @@ end
 ---@param account string 账户
 ---@return integer errorCode 错误码
 function _M.setPlayerRegister(account)
+  util.log("[DataCenter][Cmd][setPlayerRegister] account->"..tostring(account))
   Data.AccountList[account] = true;
   return ERROR_CODE.BASE_SUCESS
 end
@@ -64,6 +69,7 @@ end
 ---@param account string 账户
 ---@return integer errorCode 错误码
 function _M.setPlayerUnRegister(account)
+  util.log("[DataCenter][Cmd][setPlayerUnRegister] account->"..tostring(account))
   Data.AccountList[account] = nil;
   return ERROR_CODE.BASE_SUCESS
 end
@@ -73,6 +79,7 @@ end
 ---@param agent number agent地址
 ---@return integer errorCode 错误码
 function _M.setPlayerLogin(uid, agent)
+  util.log("[DataCenter][Cmd][setPlayerLogin] uid->"..tostring(uid).." agent->"..tostring(agent))
   Data.UidToAgent[uid] = agent
   return ERROR_CODE.BASE_SUCESS
 end
@@ -81,6 +88,7 @@ end
 ---@param uid integer uid
 ---@return integer errorCode 错误码
 function _M.setPlayerLogout(uid)
+  util.log("[DataCenter][Cmd][setPlayerLogout] uid->"..tostring(uid))
   if not uid then
     return
   end
@@ -93,6 +101,10 @@ end
 ---@param msgName string 消息名
 ---@param msgTable table 消息内容(table格式)
 function _M.sendToOnlinePlayers(uidList, msgName, msgTable)
+  util.log("[DataCenter][Cmd][sendToOnlinePlayers]"..
+           " uidList->"..util.tabToStr(uidList)..
+           " msgName->"..tostring(msgName)..
+           " msgTable->"..util.tabToStr(msgTable))
   local uidToAgent = Data.UidToAgent
   for _, uid in pairs(uidList) do
     local agent = uidToAgent[uid]
@@ -106,6 +118,9 @@ end
 ---@param msgName string 消息名
 ---@param msgTable table 消息内容(table格式)
 function _M.sendToAllOnlinePlayer(msgName, msgTable)
+  util.log("[DataCenter][Cmd][sendToAllOnlinePlayer]"..
+           " msgName->"..tostring(msgName)..
+           " msgTable->"..util.tabToStr(msgTable))
   for uid, agent in pairs(Data.UidToAgent) do
     skynet.send(agent, "lua", "sendToClient", msgName, msgTable)
   end

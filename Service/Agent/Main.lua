@@ -23,6 +23,7 @@ local Data = require "AgentData"
 ---从客户端接收数据
 ---@param fd number 客户端句柄
 function Recver(fd)
+  util.log("[Agent][Recv] Recver start")
   socket.start(fd)
   fd = fd or Data.base.fd
   while true do
@@ -32,8 +33,8 @@ function Recver(fd)
       msgLen = l1 * 256 + l2
       local baseBytes = socket.read(fd, msgLen)
       local msgName, msgTable = pbmap.unpack(baseBytes)
-      if msgName ~= "ReportPosition" then
-        util.log("[Agent][Recv]"..msgName.." "..util.tabToStr(msgTable, "block"))
+      if msgName ~= "ReportPosition" then  -- ReportPosition消息太多了不打印日志
+        util.log("[Agent][Recv] "..msgName.."\n"..msgName.." "..util.tabToStr(msgTable, "block"))
       end
       local func = Msg[msgName]
       if func then
@@ -53,8 +54,8 @@ function SendToClient(msgName, msgTable)
   local msgBytes = pbmap.pack(msgName, msgTable)
 
   local name, table = pbmap.unpack(msgBytes)
-  if name ~= "SyncPosition" then
-    util.log("[Agent][Send]"..name.." "..util.tabToStr(table, "block"))
+  if name ~= "SyncPosition" then  -- SyncPosition消息太多了不打印日志
+    util.log("[Agent][Send] "..name.."\n"..name.." "..util.tabToStr(table, "block"))
   end
 
   local sendBytes = string.pack(">s2", msgBytes)

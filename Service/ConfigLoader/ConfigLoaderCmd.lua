@@ -11,7 +11,7 @@
 
 local skynet = require "skynet"
 local sharedata = require "skynet.sharedata"
-local util = require "Util.BaseUtil"
+local util = require "Util.SvrUtil"
 
 local _M = {}
 
@@ -27,10 +27,12 @@ end
 
 -- 加载配置文件
 local function loadConf(isReload)
+  util.log("[ConfigLoader][Cmd][loadConf] Start load config, isReload->"..tostring(isReload))
   local CONF = {}
   for fileName, state in pairs(confList) do
     if state then
       local filePath = confPath .. fileName
+      util.log("[ConfigLoader][Cmd][loadConf] load file->"..tostring(fileName))
       CONF[fileName] = require(filePath)
     end
   end
@@ -44,6 +46,7 @@ local function loadConf(isReload)
 end
 
 function _M.start(conf)
+  util.log("[ConfigLoader][Cmd][start] conf->"..util.tabToStr(conf, "block"))
   if not conf then
     skynet.exit()
   end

@@ -23,6 +23,7 @@ local _M = {}
 ---启动Hall
 ---@param conf table 配置表
 function _M.start(conf)
+  util.log("[Hall][Cmd][start] conf->"..util.tabToStr(conf, "block"))
   util.setSvr(conf.svrName)
   Data.info.roomNum = 0;
 end
@@ -30,6 +31,7 @@ end
 ---打包消息SyncHallMessage
 ---@return table SyncHallMessage
 local function packSyncHallMessage()
+  util.log("[Hall][Cmd][packSyncHallMessage]")
   local msg = {
     is_sync = true,
     room_num = util.tabLen(Data.roomList),
@@ -53,6 +55,9 @@ end
 ---@param msgName string 消息名
 ---@param msgTable table 消息table
 local function sendToAllOnlinePlayer(msgName, msgTable)
+  util.log("[Hall][Cmd][sendToAllOnlinePlayer]"..
+           "msgName->"..tostring(msgName)..
+           " msgTable->"..util.tabToStr(msgTable))
   skynet.send(SVR.dataCenter, "lua", "sendToAllOnlinePlayer", msgName, msgTable)
 end
 
@@ -61,12 +66,14 @@ end
 ---@return integer roomNum 房间数量
 ---@return table roomList 房间列表(HallData.info.roomList)
 function _M.getHallInfo()
+  util.log("[Hall][Cmd][getHallInfo]")
   return ERROR_CODE.BASE_SUCESS, util.tabLen(Data.roomList), Data.roomList
 end
 
 ---获得新的随机房间号
 ---@return integer newRoomId 房间号
 local function getNewRoomId()
+  util.log("[Hall][Cmd][getNewRoomId]")
   local roomList = Data.roomList
   local newRoomId
   while true do
@@ -79,6 +86,7 @@ local function getNewRoomId()
       end
     end
     if not isExists then
+      util.log("[Hall][Cmd][getNewRoomId] newRoomId"..tostring(newRoomId))
       return newRoomId
     end
   end
@@ -89,6 +97,7 @@ end
 ---@return number errorCode 错误码
 ---@return number roomAddr 房间服务地址
 function _M.createRoom(account, agent)
+  util.log("[Hall][Cmd][createRoom] account->"..tostring(account).." agent->"..tostring(account))
   local info = Data.info
   local roomList = Data.roomList
   -- 检查房间数是否已满
@@ -121,6 +130,7 @@ end
 ---@return number errorCode 错误码
 ---@return number roomAddr 房间服务地址
 function _M.joinRoom(roomId)
+  util.log("[Hall][Cmd][joinRoom] roomId->"..tostring(roomId))
   local room = Data.roomList[roomId] or nil
   if not room then
     return ERROR_CODE.HALL_ROOM_NOT_EXISTS
@@ -142,6 +152,7 @@ end
 ---@param roomId integer 要退出的房间Id
 ---@return number errorCode 错误码
 function _M.quitRoom(roomId)
+  util.log("[Hall][Cmd][quitRoom] roomId->"..tostring(roomId))
   local room = Data.roomList[roomId] or nil
   if not room then
     return ERROR_CODE.HALL_ROOM_NOT_EXISTS
@@ -163,6 +174,7 @@ end
 ---@param mapId integer 新地图
 ---@return number errorCode 错误码
 function _M.changeMap(roomId, mapId)
+  util.log("[Hall][Cmd][changeMap] roomId->"..tostring(roomId).." mapId->"..tostring(mapId))
   local room = Data.roomList[roomId] or nil
   if not room then
     return ERROR_CODE.HALL_ROOM_NOT_EXISTS
@@ -181,6 +193,7 @@ end
 ---@param roomId integer 要关闭的房间
 ---@return number errorCode 错误码
 function _M.closeRoom(roomId)
+  util.log("[Hall][Cmd][closeRoom] roomId->"..tostring(roomId))
   if not Data.roomList[roomId] then  -- 若不存在(已关闭)则返回
     return ERROR_CODE.HALL_ROOM_NOT_EXISTS
   end

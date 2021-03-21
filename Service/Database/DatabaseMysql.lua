@@ -29,6 +29,13 @@ local _M = {}
 ---@param password string 密码
 ---@param maxPacketSize integer 最大包尺寸
 function _M.getConnect(host, port, database, user, password, maxPacketSize)
+  util.log("[Database][Mysql][getConnect]"..
+           " host->"..tostring(host)..
+           " port->"..tostring(port)..
+           " database->"..tostring(database)..
+           " user->"..tostring(user)..
+           " password->"..tostring(password)..
+           " maxPacketSize->"..tostring(maxPacketSize))
   db = mysql.connect({
     host = host or MYSQL_CONF.host,
     port = port or MYSQL_CONF.port,
@@ -42,6 +49,7 @@ end
 
 ---关闭连接
 function _M.disConnect()
+  util.log("[Database][Mysql][disConnect]")
   db:disconnect()
 end
 
@@ -52,6 +60,10 @@ end
 ---@return errorCode integer 错误码
 ---@return result table 插入结果(BASE_SUCESS) / 错误信息(未知错误)
 function _M.insertUser(account, password, name)
+  util.log("[Database][Mysql][insertUser]"..
+           " account->"..tostring(account)..
+           " password->"..tostring(password)..
+           " name->"..tostring(name))
   account = tostring(account)
   password = tostring(password)
   name = tostring(name)
@@ -72,6 +84,7 @@ end
 ---@return errorCode integer 错误码
 ---@return result table 查询结果(BASE_SUCESS) / 错误信息(未知错误)
 function _M.selectAllUser()
+  util.log("[Database][Mysql][selectAllUser]")
   local resTab = db:query("SELECT * FROM user;")
   if not resTab.badresult then
     return ERROR_CODE.BASE_SUCESS, resTab
@@ -84,6 +97,7 @@ end
 ---@return errorCode integer 错误码
 ---@return result table 查询结果(BASE_SUCESS) / 错误信息(未知错误)
 function _M.selectUserByAccount(account)
+  util.log("[Database][Mysql][selectUserByAccount] account->"..tostring(account))
   account = tostring(account)
   local resTab = db:query("SELECT * FROM user WHERE account=\""..account.."\";")
 
@@ -101,6 +115,7 @@ end
 ---@return errorCode integer 错误码
 ---@return result table 查询结果(BASE_SUCESS) / 错误信息(未知错误)
 function _M.selectUserByUid(uid)
+  util.log("[Database][Mysql][selectUserByUid] uid->"..tostring(uid))
   uid = tostring(uid)
   local resTab =  db:query("SELECT * FORM user WHERE uid="..uid..";")
 
@@ -114,6 +129,7 @@ function _M.selectUserByUid(uid)
 end
 
 function _M.updateScore(uid, score)
+  util.log("[Database][Mysql][updateScore] uid->"..tostring(uid).." score->"..tostring(score))
   uid = tostring(uid)
   score = tostring(score)
   local resTab = db:query("UPDATE user SET score=\""..score.."\" WHERE uid=\""..uid.."\"")

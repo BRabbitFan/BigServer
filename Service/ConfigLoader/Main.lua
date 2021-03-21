@@ -11,6 +11,8 @@
 
 local skynet = require "skynet"
 
+local util = require "Util.SvrUtil"
+
 local Cmd = require "ConfigLoaderCmd"
 
 skynet.start(function()

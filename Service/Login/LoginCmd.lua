@@ -18,6 +18,9 @@ local util = require "Util.SvrUtil"
 local _M = {}
 
 function _M.start(source, conf)
+  util.log("[Login][Cmd][start]"..
+           " source->"..tostring(source)..
+           " conf->"..util.tabToStr(conf, "block"))
   util.setSvr(conf.svrName)
 end
 
@@ -28,6 +31,10 @@ end
 ---@return integer errorCode 错误码
 ---@return table info 用户的信息
 function _M.login(source, account, password)
+  util.log("[Login][Cmd][login]"..
+           " source->"..tostring(source)..
+           " account->"..tostring(account)..
+           " password->"..tostring(password))
   -- 检查是否已注册
   local errorCode = skynet.call(SVR.dataCenter, "lua", "chkIsRegisterByAccount", account)
   if errorCode == ERROR_CODE.BASE_FAILED then
@@ -55,6 +62,9 @@ end
 ---@param source number 源地址
 ---@param uid integer uid
 function _M.logout(source, uid)
+  util.log("[Login][Cmd][logout]"..
+           " source->"..tostring(source)..
+           " uid->"..tostring(uid))
   skynet.call(SVR.dataCenter, "lua", "setPlayerLogout", uid)
 end
 
@@ -65,6 +75,11 @@ end
 ---@param name string 名字
 ---@return integer errorCode 错误码
 function _M.register(source, account, password, name)
+  util.log("[Login][Cmd][register]"..
+           " source->"..tostring(source)..
+           " account->"..tostring(account)..
+           " password->"..tostring(password)..
+           " name->"..tostring(name))
   local errorCode, result = skynet.call(SVR.database, "lua", "setPlayerInfo", {
     account = account,
     password = password,

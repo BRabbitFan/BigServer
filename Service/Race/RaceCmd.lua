@@ -25,6 +25,9 @@ local _M = {}
 ---@param msgName string 消息名
 ---@param msgTable table 消息内容(table格式)
 local function sendToAll(msgName, msgTable)
+  util.log("[Race][Cmd][sendToAll]"..
+           " msgName->"..tostring(msgName)..
+           " msgTable"..util.tabToStr(msgTable))
   for _, player in pairs(Data.playerList) do
     skynet.send(player.agent, "lua", "sendToClient", msgName, msgTable)
   end
@@ -55,6 +58,7 @@ end
 ---启动Race
 ---@param conf table 配置表
 function _M.start(conf)
+  util.log("[Race][Cmd][start] conf->"..util.tabToStr(conf, "block"))
   -- 初始化数据
   Data.MAP_ID = conf.mapId
   local playerList = Data.playerList
@@ -96,6 +100,7 @@ end
 ---@return integer errorCode 错误码
 ---@return table player 玩家table
 local function findPlayerByUid(uid)
+  -- util.log("[Race][Cmd][sendToAll] uid->"..tostring(uid))  -- ReportPosition消息太多了不打印日志
   for _, player in pairs(Data.playerList) do
     if player.uid == uid then
       return ERROR_CODE.BASE_SUCESS_WITH_TAB, player
@@ -107,6 +112,7 @@ end
 ---检查是否所有玩家都加载完毕
 ---@return boolean isAllLoadFinish
 local function isAllLoadFinish()
+  util.log("[Race][Cmd][isAllLoadFinish]")
   local STATE = DEFINE.STATE
   for _, player in pairs(Data.playerList) do
     if player.state == (STATE.LOADING or STATE.OFFLINE) then
@@ -120,6 +126,7 @@ end
 ---@param uid integer uid
 ---@return integer errorCode 错误码
 function _M.playerLoadFinish(uid)
+  util.log("[Race][Cmd][playerLoadFinish] uid->"..tostring(uid))
   local errorCode, player = findPlayerByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS_WITH_TAB then
     return errorCode
@@ -142,6 +149,9 @@ end
 ---@param PositionTable table 位置信息(Position消息的table格式)
 ---@return integer errorCode 错误码
 function _M.playerPosition(uid, PositionTable)
+  -- util.log("[Race][Cmd][playerPosition]"..    -- ReportPosition消息太多了不打印日志
+  --          " uid->"..tostring(uid)..
+  --          " PositionTable->"..util.tabToStr(PositionTable))
   -- 找到上报的玩家
   local errorCode, reporter = findPlayerByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS_WITH_TAB then
@@ -175,6 +185,8 @@ end
 ---结束游戏
 ---@param winUid integer 赢家uid
 local function finishGame(winUid)
+  util.log("[Race][Cmd][finishGame]"..
+           " winUid->"..tostring(winUid))
   for _, player in pairs(Data.playerList) do
     if player.uid == winUid then
       skynet.send(player.agent, "lua", "addScore", Data.GLOBAL_CONFIG.RaceConf.WIN_SCORE)
@@ -187,6 +199,7 @@ end
 ---检查是否所有玩家都掉线了
 ---@return boolean isAllOffline
 local function isAllOffline()
+  util.log("[Race][Cmd][isAllOffline]")
   local STATE = DEFINE.STATE
   for _, player in pairs(Data.playerList) do
     if player.state ~= STATE.OFFLINE then
@@ -200,7 +213,7 @@ end
 ---@param uid integer uid
 ---@param stateCode integer 状态码
 local function playerGameState(uid, stateCode)
-  util.log("[Race][Cmd][playerGameState]uid->"..tostring(uid).." stateCode->"..tostring(stateCode))
+  util.log("[Race][Cmd][playerGameState] uid->"..tostring(uid).." stateCode->"..tostring(stateCode))
   local errorCode, player = findPlayerByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS_WITH_TAB then
     return
@@ -236,6 +249,7 @@ end
 ---@param uid integer uid
 ---@param stateCode integer 状态码
 function _M.playerGameState(uid, stateCode)
+  util.log("[Race][Cmd][playerGameState] add queue")
   stateQueue(playerGameState, uid, stateCode)
 end
 

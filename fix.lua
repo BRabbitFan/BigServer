@@ -1,4 +1,4 @@
-local Data = require "AgentData"
+local Data = require "RaceData"
 local util = require "Util.SvrUtil"
 
 -- local Cmd = require "DataCenterCmd"

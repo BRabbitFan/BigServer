@@ -27,6 +27,11 @@ local _M = {}
 ---@param dbNum integer 数据库号
 ---@param auth string 账号
 function _M.getConnect(host, port, dbNum, auth)
+  util.log("[Database][Redis][getConnect]"..
+           " host->"..tostring(host)..
+           " port->"..tostring(port)..
+           " dbNum->"..tostring(dbNum)..
+           " auth->"..tostring(auth))
   db = redis.connect({
     host = host or REDIS_CONF.host,
     port = port or REDIS_CONF.port,
@@ -40,6 +45,9 @@ end
 ---@param uid integer uid
 ---@return integer errorCode 错误码
 function _M.setUidByAccount(account, uid)
+  util.log("[Database][Redis][setUidByAccount]"..
+           " account->"..tostring(account)..
+           " uid->"..tostring(uid))
   account = tostring(account)
   uid = tostring(uid)
   db:hset(KEY_HEAD.ACCOUNT_TO_UID, account, uid)
@@ -51,6 +59,7 @@ end
 ---@return integer errorCode 错误码
 ---@return integer uid uid
 function _M.getUidByAccount(account)
+  util.log("[Database][Redis][getUidByAccount] account->"..tostring(account))
   account = tostring(account)
   local uid = db:hget(KEY_HEAD.ACCOUNT_TO_UID, account)
   if not uid then
@@ -64,6 +73,9 @@ end
 ---@param infoTab table 玩家信息
 ---@return table errorCode 错误码
 function _M.setUserInfo(uid, infoTab)
+  util.log("[Database][Redis][setUserInfo]"..
+           " uid->"..tostring(uid)..
+           " info->"..util.tabToStr(infoTab))
   local keyStr = KEY_HEAD.USER_INFO .. tostring(uid)
   local valueStr = util.tabToStr(infoTab)
   db:set(keyStr, valueStr)
@@ -75,6 +87,7 @@ end
 ---@return integer errorCode 错误码
 ---@return table infoTab 玩家信息
 function _M.getUserInfoByUid(uid)
+  util.log("[Database][Redis][getUserInfoByUid] uid->"..tostring(uid))
   local keyStr = KEY_HEAD.USER_INFO .. tostring(uid)
   local valueStr = db:get(keyStr)
   if not valueStr then
@@ -88,6 +101,9 @@ end
 ---@param newScore integer 新分数
 ---@return integer errorCode 错误码
 function _M.updateScore(uid, newScore)
+  util.log("[Database][Redis][setUserInfo]"..
+           " uid->"..tostring(uid)..
+           " newScore->"..tostring(newScore))
   local errorCode, info = _M.getUserInfoByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode

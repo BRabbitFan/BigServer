@@ -22,6 +22,7 @@ local _M = {}
 
 ---检查是否是空房间
 local function chkRoomEmpty()
+  util.log("[Room][Cmd][chkRoomEmpty] start check")
   local playerList = Data.playerList
   while true do
     skynet.sleep(10)
@@ -35,6 +36,7 @@ end
 ---启动Room
 ---@param conf table 配置表
 function _M.start(conf)
+  util.log("[Room][Cmd][start] conf->"..util.tabToStr(conf, "block"))
   Data.ROOM_ID = conf.roomId
   Data.mapId = Data.GLOBAL_CONFIG.RaceConf.MAP_LIST.DEFAULT_MAP
 
@@ -56,6 +58,9 @@ end
 ---@param msgName string 消息名
 ---@param msgTable table 消息内容(table格式)
 local function sendToAll(msgName, msgTable)
+  util.log("[Room][Cmd][sendToAll]"..
+           " msgName->"..tostring(msgName)..
+           " msgTable->"..util.tabToStr(msgTable))
   for _, player in pairs(Data.playerList) do
     skynet.send(player.agent, "lua", "sendToClient", msgName, msgTable)
   end
@@ -65,6 +70,7 @@ end
 ---@return integer errorCode 错误码
 ---@return integer 位置Id
 local function getEmptyPos()
+  util.log("[Room][Cmd][getEmptyPos]")
   for pos = 1, 3 do
     local isFind = false
     for _, player in pairs(Data.playerList) do
@@ -86,6 +92,7 @@ end
 ---@return integer errorCode 错误码
 ---@return integer 该玩家的位置
 function _M.playerJoin(player, agent)
+  util.log("[Room][Cmd][playerJoin] player->"..util.tabToStr(player).." agent->"..tostring(agent))
   local errorCode, newPos = getEmptyPos()
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode
@@ -112,6 +119,7 @@ end
 
 ---选取新房主
 local function newMaster()
+  util.log("[Room][Cmd][newMaster]")
   local playerList = Data.playerList
   -- 先设置所有人都不是房主
   for _, player in pairs(playerList) do
@@ -132,6 +140,7 @@ end
 ---@param uid integer uid
 ---@return integer index playerList中的索引
 local function getPlayerIndexByUid(uid)
+  util.log("[Room][Cmd][getPlayerIndexByUid] uid->"..tostring(uid))
   for index, player in pairs(Data.playerList) do
     if player.uid == uid then
       return ERROR_CODE.BASE_SUCESS, index
@@ -143,6 +152,7 @@ end
 ---检查是否所有玩家都准备了
 ---@return boolean isAllReady
 local function isAllReady()
+  util.log("[Room][Cmd][isAllReady]")
   local playerList = Data.playerList
   local maxPlayerNum = Data.GLOBAL_CONFIG.RoomRole.maxPlayerNum
 
@@ -162,6 +172,7 @@ end
 
 ---开始游戏
 local function startRace()
+  util.log("[Room][Cmd][startRace]")
   -- 开启新游戏
   local newRace = skynet.newservice("Race")
   skynet.send(newRace, "lua", "start", {
@@ -182,6 +193,7 @@ end
 ---@param isReady boolean 是否准备
 ---@return integer errorCode 错误码
 function _M.playerReady(uid, isReady)
+  util.log("[Room][Cmd][playerReady] uid->"..tostring(uid).." isReady->"..tostring(isReady))
   local errorCode, index = getPlayerIndexByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode
@@ -209,7 +221,7 @@ end
 ---@param uid integer uid
 ---@return integer errorCode 错误码
 function _M.playerQuit(uid)
-  util.log("[Room][Cmd][playerQuit]uid->"..uid)
+  util.log("[Room][Cmd][playerQuit]uid->"..tostring(uid))
   local errorCode, index = getPlayerIndexByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode
@@ -237,6 +249,7 @@ end
 ---@param mapId integer 地图Id
 ---@return any
 function _M.playerChangeMap(uid, mapId)
+  util.log("[Room][Cmd][playerChangeMap]uid->"..tostring(uid).." mapId->"..tostring(mapId))
   local errorCode, index = getPlayerIndexByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode
@@ -266,6 +279,7 @@ end
 ---@return integer errorCode 错误码
 ---@return table RoomInfo (protobuf)
 function _M.packRoomInfo()
+  util.log("[Room][Cmd][packRoomInfo]")
   local room_info = {
     room_id = Data.ROOM_ID,
     map_id = Data.mapId,

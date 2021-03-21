@@ -25,7 +25,7 @@ local _M = {}
 
 -- 登录
 function _M.ReqLoginAccount(msgTable)
-  util.log("[Agent][MSG][ReqLoginAccount]")
+  util.log("[Agent][Msg][ReqLoginAccount]")
   local info = msgTable.login_account
   local errorCode, totalInfo = skynet.call(SVR.login, "lua", "login", info.account, info.password)
 
@@ -46,6 +46,7 @@ end
 
 -- 注册
 function _M.ReqRegisterAccount(msgTable)
+  util.log("[Agent][Msg][ReqRegisterAccount]")
   local info = msgTable.register_account
   local errorCode = skynet.call(SVR.login, "lua", "register", info.account, info.password, info.name)
 
@@ -56,6 +57,7 @@ end
 
 -- 查询信息
 function _M.ReqSelfInfo(msgTable)
+  util.log("[Agent][Msg][ReqSelfInfo]")
   local account = Data.account
   SendToClient("RetSelfInfo", {
     account = {
@@ -70,6 +72,7 @@ end
 
 -- 请求大厅信息
 function _M.ReqHallMessage(msgTable)
+  util.log("[Agent][Msg][ReqHallMessage]")
   local errorCode, roomNum, roomList = skynet.call(SVR.hall, "lua", "getHallInfo")
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return
@@ -93,6 +96,7 @@ end
 
 -- 创建房间
 function _M.ReqCreateRoom(msgTable)
+  util.log("[Agent][Msg][ReqCreateRoom]")
   local errorCode, newRoom = skynet.call(SVR.hall, "lua", "createRoom", Data.account, skynet.self())
 
   if errorCode == ERROR_CODE.BASE_SUCESS then
@@ -106,6 +110,7 @@ end
 
 -- 加入房间
 function _M.ReqJoinRoom(msgTable)
+  util.log("[Agent][Msg][ReqJoinRoom]")
   local errorCode, roomAddr = skynet.call(SVR.hall, "lua", "joinRoom", msgTable.room_id)
   if errorCode == ERROR_CODE.BASE_SUCESS then
     Data.room.addr = roomAddr
@@ -121,6 +126,7 @@ end
 
 -- 请求房间详情
 function _M.ReqRoomInfo(msgTable)
+  util.log("[Agent][Msg][ReqRoomInfo]")
   local roomInfo = skynet.call(Data.room.addr, "lua", "packRoomInfo")
 
   SendToClient("SyncRoomInfo", {
@@ -132,6 +138,7 @@ end
 
 -- 玩家房间内动作
 function _M.ReqPlayerAction(msgTable)
+  util.log("[Agent][Msg][ReqPlayerAction]")
   local roomAddr = Data.room.addr
   if not roomAddr then
     return
@@ -155,6 +162,7 @@ end
 
 -- 游戏加载完毕
 function _M.ReportLoadGame(msgTable)
+  util.log("[Agent][Msg][ReportLoadGame]")
   local race = Data.race.addr
   if not race then
     return
@@ -164,6 +172,7 @@ end
 
 -- 请求开始游戏
 function _M.ReqStartGame(msgTable)
+  util.log("[Agent][Msg][ReqStartGame]")
   local race = Data.race.addr
   if not race then
     return
@@ -173,6 +182,7 @@ end
 
 -- 汇报自身方位信息
 function _M.ReportPosition(msgTable)
+  -- util.log("[Agent][Msg][ReportPosition]")  -- ReportPosition消息太多了不打印日志
   local race = Data.race.addr
   if not race then
     return
@@ -182,6 +192,8 @@ end
 
 -- 汇报游戏状态
 function _M.ReportGameState(msgTable)
+  util.log("[Agent][Msg][ReportGameState]")
+
   local race = Data.race.addr
   if not race then
     return

@@ -26,13 +26,15 @@ local _M = {}
 ---@param msgName string 消息名
 ---@param msgTable table 消息内容(table格式)
 function _M.sendToClient(msgName, msgTable)
+  -- SyncPosition消息太多了不打印日志
+  -- util.log("[Agent][Cmd][sendToClient] magName->"..tostring(msgName))
   SendToClient(msgName, msgTable)
 end
 
 ---启动Agent
 ---@param conf table 参数列表
 function _M.start(conf)
-  util.log("[Agent][Cmd][start]" .. util.tabToStr(conf))
+  util.log("[Agent][Cmd][start] conf->" .. util.tabToStr(conf, "block"))
   local base = Data.base
   base.fd = conf.fd
   base.gate = conf.gate
@@ -43,7 +45,7 @@ end
 ---关闭Agent
 ---@param fd number 客户端句柄
 function _M.close(fd)
-  util.log("[Agent][Cmd][close]")
+  util.log("[Agent][Cmd][close] fd->"..tostring(fd))
   fd = fd or Data.base.fd
   local uid = Data.account.uid or nil
   -- 关闭连接, 向网关与登录服务通知已登出
@@ -71,6 +73,7 @@ end
 ---初始化Race服务
 ---@param race number race服务地址
 function _M.initRace(race)
+  util.log("[Agent][Cmd][initRace] race->"..tostring(race))
   Data.room = {}
   Data.race.addr = race
 end
@@ -78,6 +81,7 @@ end
 ---加分
 ---@param score integer 增加的分数
 function _M.addScore(score)
+  util.log("[Agent][Cmd][addScore] score->"..tostring(score))
   local account = Data.account
   account.score = account.score + score
   skynet.send(SVR.database, "lua", "updateScore", account.uid, account.score)
@@ -85,6 +89,7 @@ end
 
 ---比赛结束
 function _M.raceFinish()
+  util.log("[Agent][Cmd][raceFinish]")
   Data.race = {}
 end
 
