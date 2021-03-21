@@ -28,7 +28,6 @@ return {
     --   name = "playerA",
     --   pos = 2,
     --   state = 0,
-    --   finishTime = 123535235,
     --   colorId = 2,
     --   agent = xxx,
     -- }, ...

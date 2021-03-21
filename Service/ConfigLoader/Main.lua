@@ -9,12 +9,6 @@
 -- Description  : 配置服务--服务入口
 -- -----------------------------
 
---[[
-  配置服务(ConfigLoader)只用于加载配置文件至sharedata, 服务在加载配置结束后则退出.
-  通过start指令传入参数, loadAll<boolean>指定是否加载所有文件, loadList<table>指定加载的文件.
-  当需要热更重新加载配置文件时, 再起一个ConfigLoader即可.
---]]
-
 local skynet = require "skynet"
 
 local Cmd = require "ConfigLoaderCmd"

@@ -63,12 +63,18 @@ return {
   -- Hall服务相关(05)
   HALL_ROOM_NUM_MAX         = 205001,  -- 创建房间失败, 房间数量已满
   HALL_PLAYER_NUM_FULL      = 205002,  -- 进入房间失败, 房间已满员
+  HALL_ROOM_MAP_SAME        = 205003,  -- 房间地图与之前的一致
   HALL_INFO_NOT_EXISTS      = 305001,  -- 查询大厅信息错误, 大厅信息不存在
-  HALL_ROOM_NOT_EXISTS      = 305002,  -- 进入房间错误, 房间不存在
+  HALL_ROOM_NOT_EXISTS      = 305002,  -- 错误, 房间不存在
 
   -- Room服务相关(06)
   ROOM_PLAYER_FULL          = 206001,  -- 房间已满员
+  ROOM_READY_SAME           = 206002,  -- 失败, 前后准备状态一致
+  ROOM_NOT_MASTER           = 206003,  -- 失败, 玩家不是房主
+  ROOM_MAP_SAME             = 206004,  -- 失败, 前后房间Id一致
+  ROOM_PLAYER_NOT_EXISTS    = 306001,  -- 错误, 玩家不存在
 
   -- Race服务相关(07)
-
+  RACE_NOT_ALL_READY        = 207001,  -- 失败, 有玩家还未准备
+  RACE_PLAYER_NOT_EXISTS    = 307001,  -- 错误, 玩家不存在
 }

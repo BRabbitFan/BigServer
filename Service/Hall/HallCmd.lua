@@ -20,7 +20,7 @@ local Data = require "HallData"
 
 local _M = {}
 
----服务初始化(MainSvr)
+---启动Hall
 ---@param conf table 配置表
 function _M.start(conf)
   util.setSvr(conf.svrName)
@@ -65,7 +65,7 @@ function _M.getHallInfo()
 end
 
 ---获得新的随机房间号
----@return newRoomId integer 房间号
+---@return integer newRoomId 房间号
 local function getNewRoomId()
   local roomList = Data.roomList
   local newRoomId
@@ -158,6 +158,10 @@ function _M.quitRoom(roomId)
   return ERROR_CODE.BASE_SUCESS
 end
 
+---玩家切换地图
+---@param roomId integer 换地图的房间号
+---@param mapId integer 新地图
+---@return number errorCode 错误码
 function _M.changeMap(roomId, mapId)
   local room = Data.roomList[roomId] or nil
   if not room then
@@ -165,11 +169,12 @@ function _M.changeMap(roomId, mapId)
   end
 
   if room.mapId == mapId then
-    return
+    return ERROR_CODE.HALL_ROOM_MAP_SAME
   end
 
   room.mapId = mapId
   sendToAllOnlinePlayer("SyncHallMessage", packSyncHallMessage())
+  return ERROR_CODE.BASE_SUCESS
 end
 
 ---关闭房间
@@ -177,12 +182,11 @@ end
 ---@return number errorCode 错误码
 function _M.closeRoom(roomId)
   if not Data.roomList[roomId] then  -- 若不存在(已关闭)则返回
-    return ERROR_CODE.BASE_SUCESS
+    return ERROR_CODE.HALL_ROOM_NOT_EXISTS
   end
 
   Data.roomList[roomId] = nil
 
-  -- 同步给全体玩家
   sendToAllOnlinePlayer("SyncHallMessage", packSyncHallMessage())
 
   return ERROR_CODE.BASE_SUCESS

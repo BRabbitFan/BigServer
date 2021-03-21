@@ -15,41 +15,41 @@ return {
   ---@type table<fd|gate, ...>
   base = {
     ---@type number
-    fd = nil,   ---客户端socket句柄
+    fd = nil,    -- 客户端socket句柄
 
     ---@type number
-    gate = nil,  ---网关地址
+    gate = nil,  -- 网关地址
   },
 
   ---账号信息
   ---@type table<account|password|name, ...>
   account = {
     ---@type integer
-    uid = nil,      ---uid
+    uid = nil,      -- uid
 
     ---@type string
-    account = nil,  ---账号
+    account = nil,  -- 账号
 
     ---@type string
-    password = nil, ---密码
+    password = nil, -- 密码
 
     ---@type string
-    name = nil,     ---名字
+    name = nil,     -- 名字
 
     ---@type integer
-    score = nil,    ---积分
+    score = nil,    -- 积分
   },
 
   ---房间信息
   ---@type table<addr, ...>
   room = {
-    addr = nil,
+    addr = nil,  -- 服务地址
   },
 
   ---游戏信息
   ---@type table
   race = {
-    addr = nil,
+    addr = nil,  -- 服务地址
   },
 
 }

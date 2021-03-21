@@ -15,5 +15,4 @@ return {
   database = ".database",  -- 数据库服务
   login = ".login",  -- 登录服务
   hall = ".hall",  -- 游戏大厅
-  agent = ".agent_",  -- agent_uid -> agent服务
 }

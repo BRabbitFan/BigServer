@@ -20,6 +20,7 @@ local Data = require "RoomData"
 
 local _M = {}
 
+---检查是否是空房间
 local function chkRoomEmpty()
   local playerList = Data.playerList
   while true do
@@ -31,6 +32,8 @@ local function chkRoomEmpty()
   end
 end
 
+---启动Room
+---@param conf table 配置表
 function _M.start(conf)
   Data.ROOM_ID = conf.roomId
   Data.mapId = Data.GLOBAL_CONFIG.RaceConf.MAP_LIST.DEFAULT_MAP
@@ -49,14 +52,19 @@ function _M.start(conf)
   skynet.fork(chkRoomEmpty)
 end
 
+---向房间内全体玩家发送消息
+---@param msgName string 消息名
+---@param msgTable table 消息内容(table格式)
 local function sendToAll(msgName, msgTable)
   for _, player in pairs(Data.playerList) do
     skynet.send(player.agent, "lua", "sendToClient", msgName, msgTable)
   end
 end
 
+---获得一个空位
+---@return integer errorCode 错误码
+---@return integer 位置Id
 local function getEmptyPos()
-  print(util.tabToStr(Data.playerList, "block"))
   for pos = 1, 3 do
     local isFind = false
     for _, player in pairs(Data.playerList) do
@@ -72,6 +80,11 @@ local function getEmptyPos()
   return ERROR_CODE.ROOM_PLAYER_FULL
 end
 
+---玩家加入房间
+---@param player table 玩家信息
+---@param agent integer Agent地址
+---@return integer errorCode 错误码
+---@return integer 该玩家的位置
 function _M.playerJoin(player, agent)
   local errorCode, newPos = getEmptyPos()
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
@@ -97,6 +110,7 @@ function _M.playerJoin(player, agent)
   return ERROR_CODE.BASE_SUCESS, newPos
 end
 
+---选取新房主
 local function newMaster()
   local playerList = Data.playerList
   -- 先设置所有人都不是房主
@@ -114,15 +128,20 @@ local function newMaster()
   end
 end
 
+---通过uid获得玩家的索引
+---@param uid integer uid
+---@return integer index playerList中的索引
 local function getPlayerIndexByUid(uid)
   for index, player in pairs(Data.playerList) do
     if player.uid == uid then
-      return index
+      return ERROR_CODE.BASE_SUCESS, index
     end
   end
-  return false
+  return ERROR_CODE.ROOM_PLAYER_NOT_EXISTS
 end
 
+---检查是否所有玩家都准备了
+---@return boolean isAllReady
 local function isAllReady()
   local playerList = Data.playerList
   local maxPlayerNum = Data.GLOBAL_CONFIG.RoomRole.maxPlayerNum
@@ -141,6 +160,7 @@ local function isAllReady()
   return false
 end
 
+---开始游戏
 local function startRace()
   -- 开启新游戏
   local newRace = skynet.newservice("Race")
@@ -157,15 +177,19 @@ local function startRace()
   skynet.exit()
 end
 
+---玩家更新准备状态
+---@param uid integer uid
+---@param isReady boolean 是否准备
+---@return integer errorCode 错误码
 function _M.playerReady(uid, isReady)
-  local index = getPlayerIndexByUid(uid)
-  if not index then
-    return
+  local errorCode, index = getPlayerIndexByUid(uid)
+  if errorCode ~= ERROR_CODE.BASE_SUCESS then
+    return errorCode
   end
 
   local player = Data.playerList[index]
   if player.isReady == isReady then  -- 只有前后状态不一致才需要操作
-    return
+    return ERROR_CODE.ROOM_READY_SAME
   end
 
   player.isReady = isReady
@@ -178,13 +202,17 @@ function _M.playerReady(uid, isReady)
   if isAllReady() then
     startRace()
   end
+  return ERROR_CODE.BASE_SUCESS
 end
 
+---玩家退出房间
+---@param uid integer uid
+---@return integer errorCode 错误码
 function _M.playerQuit(uid)
   util.log("[Room][Cmd][playerQuit]uid->"..uid)
-  local index = getPlayerIndexByUid(uid)
-  if not index then
-    return
+  local errorCode, index = getPlayerIndexByUid(uid)
+  if errorCode ~= ERROR_CODE.BASE_SUCESS then
+    return errorCode
   end
 
   local playerList = Data.playerList
@@ -201,14 +229,29 @@ function _M.playerQuit(uid)
     error_code = ERROR_CODE.BASE_SUCESS,
     room_info = _M.packRoomInfo(),
   })
+  return ERROR_CODE.BASE_SUCESS
 end
 
+---玩家换地图
+---@param uid integer uid
+---@param mapId integer 地图Id
+---@return any
 function _M.playerChangeMap(uid, mapId)
-  local player = Data.playerList[getPlayerIndexByUid(uid)]
-  -- 检查有没有在房间内 , 是不是房主 , 前后地图有没有改变
-  if (not player) or (not player.isMaster) or (Data.mapId == mapId) then
-    return
+  local errorCode, index = getPlayerIndexByUid(uid)
+  if errorCode ~= ERROR_CODE.BASE_SUCESS then
+    return errorCode
   end
+  local player = Data.playerList[index]
+
+  -- 检查有没有在房间内 , 是不是房主 , 前后地图有没有改变
+  if not player then
+    return ERROR_CODE.ROOM_PLAYER_NOT_EXISTS
+  elseif not player.isMaster then
+    return ERROR_CODE.ROOM_NOT_MASTER
+  elseif Data.mapId == mapId then
+    return ERROR_CODE.ROOM_MAP_SAME
+  end
+
   Data.mapId = mapId
   sendToAll("SyncRoomInfo", {
     is_sync = true,
@@ -216,6 +259,7 @@ function _M.playerChangeMap(uid, mapId)
     room_info = _M.packRoomInfo(),
   })
   skynet.send(SVR.hall, "lua", "changeMap", Data.ROOM_ID, Data.mapId)
+  return ERROR_CODE.BASE_SUCESS
 end
 
 ---打包RoomInfo消息 (protobuf)

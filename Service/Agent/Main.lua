@@ -20,6 +20,8 @@ local Msg = require "AgentMsg"
 
 local Data = require "AgentData"
 
+---从客户端接收数据
+---@param fd number 客户端句柄
 function Recver(fd)
   socket.start(fd)
   fd = fd or Data.base.fd
@@ -44,6 +46,9 @@ function Recver(fd)
   Cmd.close(fd)
 end
 
+---发送数据到客户端
+---@param msgName string 消息名
+---@param msgTable table 消息内容(table格式)
 function SendToClient(msgName, msgTable)
   local msgBytes = pbmap.pack(msgName, msgTable)
 

@@ -10,14 +10,16 @@
 -- -----------------------------
 
 return {
+  ---房间内动作
+  ---@type table
   ROOM_ACTION = {
     [1] = "GET_READY",
     [2] = "UN_READY",
     [3] = "QUIT_ROOM",
     [4] = "CHANGE_MAP",
-    GET_READY = 1,
-    UN_READY = 2,
-    QUIT_ROOM= 3,
-    CHANGE_MAP = 4,
+    GET_READY = 1,   -- 准备
+    UN_READY = 2,    -- 取消准备
+    QUIT_ROOM= 3,    -- 退出房间
+    CHANGE_MAP = 4,  -- 换地图
   },
 }

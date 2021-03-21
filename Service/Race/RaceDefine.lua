@@ -19,6 +19,4 @@ return {
     FINISH = 3,    -- 完赛
     OVERTIME = 4,  -- 超时
   },
-
-  NOT_FINISH = -1,
 }

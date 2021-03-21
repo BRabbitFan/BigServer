@@ -15,11 +15,8 @@ return  {
   GLOBAL_CONFIG = {};
 
   ---大厅信息
-  ---@type table<maxRoomNum, ...>
+  ---@type table<roomNum, ...>
   info = {
-    ---@type integer
-    maxRoomNum = nil,  ---最大房间数
-
     ---@type integer
     roomNum = nil,     ---当前房间数量
   },

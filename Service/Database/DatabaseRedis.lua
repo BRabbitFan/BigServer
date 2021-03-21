@@ -38,7 +38,7 @@ end
 ---设置account->uid映射
 ---@param account string 账号
 ---@param uid integer uid
----@return errorCode integer 错误码
+---@return integer errorCode 错误码
 function _M.setUidByAccount(account, uid)
   account = tostring(account)
   uid = tostring(uid)
@@ -48,8 +48,8 @@ end
 
 ---使用account获取uid
 ---@param account string 账号
----@return errorCode integer 错误码
----@return uid integer uid
+---@return integer errorCode 错误码
+---@return integer uid uid
 function _M.getUidByAccount(account)
   account = tostring(account)
   local uid = db:hget(KEY_HEAD.ACCOUNT_TO_UID, account)
@@ -62,6 +62,7 @@ end
 ---设置玩家信息
 ---@param uid integer 玩家uid
 ---@param infoTab table 玩家信息
+---@return table errorCode 错误码
 function _M.setUserInfo(uid, infoTab)
   local keyStr = KEY_HEAD.USER_INFO .. tostring(uid)
   local valueStr = util.tabToStr(infoTab)
@@ -71,7 +72,8 @@ end
 
 ---获取玩家信息, 通过uid
 ---@param uid integer uid
----@return infoTab table 玩家信息
+---@return integer errorCode 错误码
+---@return table infoTab 玩家信息
 function _M.getUserInfoByUid(uid)
   local keyStr = KEY_HEAD.USER_INFO .. tostring(uid)
   local valueStr = db:get(keyStr)
@@ -81,13 +83,17 @@ function _M.getUserInfoByUid(uid)
   return ERROR_CODE.BASE_SUCESS, util.strToTab(valueStr)
 end
 
-function _M.updateScore(uid, score)
+---更新玩家分数
+---@param uid integer uid
+---@param newScore integer 新分数
+---@return integer errorCode 错误码
+function _M.updateScore(uid, newScore)
   local errorCode, info = _M.getUserInfoByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode
   end
 
-  info.score = score
+  info.score = newScore
   return _M.setUserInfo(uid, info)
 end
 

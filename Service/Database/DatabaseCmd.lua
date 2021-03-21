@@ -22,8 +22,8 @@ local Redis = require "DatabaseRedis"
 local _M = {}
 
 ---初始化Redis缓存
----@return errorCode integer 错误码
----@return result table 错误信息(未知错误)
+---@return integer errorCode 错误码
+---@return table result 错误信息(未知错误)
 local function initRedis()
   local errorCode, resTab = Mysql.selectAllUser()
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
@@ -39,6 +39,8 @@ local function initRedis()
   return ERROR_CODE.BASE_SUCESS
 end
 
+---启动Database
+---@param conf table 参数列表
 function _M.start(conf)
   util.setSvr(conf.svrName)
   Mysql.getConnect()
@@ -48,8 +50,8 @@ end
 
 ---设置玩家账号信息
 ---@param infoTab table<account|password, ...> 账号信息
----@return errorCode integer 错误码
----@return result table 查询结果(BASE_SUCESS) / 错误信息(未知错误)
+---@return integer errorCode 错误码
+---@return table result 查询结果(BASE_SUCESS) / 错误信息(未知错误)
 function _M.setPlayerInfo(infoTab)
   local errorCode, resTab = Mysql.insertUser(infoTab.account, infoTab.password, infoTab.name)
   if errorCode == ERROR_CODE.DB_MYSQL_DUPLICATE_ENTRY then
@@ -78,8 +80,8 @@ end
 
 ---获取玩家账号信息, 通过uid
 ---@param uid integer uid
----@return errorCode integer 错误码
----@return infoTable table 账户信息
+---@return integer errorCode 错误码
+---@return table infoTable 账户信息
 function _M.getPlayerInfoByUid(uid)
   local errorCode, resTab = Redis.getUserInfoByUid(uid)
   if errorCode == ERROR_CODE.DB_REDIS_HGET_EMPTY then
@@ -92,8 +94,8 @@ end
 
 ---通过account获取玩家uid
 ---@param account string 账户
----@return errorCode integer 错误码
----@return uid integer uid
+---@return integer errorCode 错误码
+---@return integer uid uid
 function _M.getUidByAccount(account)
   local errorCode, uid = Redis.getUidByAccount(account)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
@@ -104,8 +106,8 @@ end
 
 ---获取玩家账号信息, 通过账号
 ---@param account string 账号
----@return errorCode integer 错误码
----@return infoTable table 账户信息
+---@return integer errorCode 错误码
+---@return table infoTable 账户信息
 function _M.getPlayerInfoByAccount(account)
   local errorCode, uid = _M.getUidByAccount(account)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
@@ -114,12 +116,16 @@ function _M.getPlayerInfoByAccount(account)
   return _M.getPlayerInfoByUid(uid)
 end
 
-function _M.updateScore(uid, score)
-  local errorCode = Mysql.updateScore(uid, score)
+---更新玩家分数
+---@param uid integer 玩家uid
+---@param newScore integer 新分数
+---@return integer errorCode 错误码
+function _M.updateScore(uid, newScore)
+  local errorCode = Mysql.updateScore(uid, newScore)
   if errorCode ~= ERROR_CODE.BASE_SUCESS then
     return errorCode
   end
-  return Redis.updateScore(uid, score)
+  return Redis.updateScore(uid, newScore)
 end
 
 return _M

@@ -21,12 +21,17 @@ local Data = require "RaceData"
 
 local _M = {}
 
+---发送消息给比赛内全体玩家
+---@param msgName string 消息名
+---@param msgTable table 消息内容(table格式)
 local function sendToAll(msgName, msgTable)
   for _, player in pairs(Data.playerList) do
     skynet.send(player.agent, "lua", "sendToClient", msgName, msgTable)
   end
 end
 
+---获得一个未被占用的colorId
+---@return integer colorId
 local function getColor()
   local COLOR_LIST = Data.GLOBAL_CONFIG.RaceConf.COLOR_LIST
   local index = 1
@@ -47,6 +52,8 @@ local function getColor()
   end
 end
 
+---启动Race
+---@param conf table 配置表
 function _M.start(conf)
   -- 初始化数据
   Data.MAP_ID = conf.mapId
@@ -58,8 +65,7 @@ function _M.start(conf)
       name = player.name,
       pos = player.pos,
       state = DEFINE.STATE.LOADING,
-      finishTime = DEFINE.NOT_FINISH,
-      colorId = player.pos,  -- TODO : 实现getColor(), 现在被阻塞了
+      colorId = player.pos + 1,  -- TODO : 实现getColor(), 现在被阻塞了
       agent = player.agent,
     })
   end
@@ -85,15 +91,21 @@ function _M.start(conf)
   sendToAll("SyncLoadGame", msg)
 end
 
+---通过uid找到游戏内的玩家
+---@param uid integer uid
+---@return integer errorCode 错误码
+---@return table player 玩家table
 local function findPlayerByUid(uid)
   for _, player in pairs(Data.playerList) do
     if player.uid == uid then
       return ERROR_CODE.BASE_SUCESS_WITH_TAB, player
     end
   end
-  return ERROR_CODE.BASE_FAILED
+  return ERROR_CODE.RACE_PLAYER_NOT_EXISTS
 end
 
+---检查是否所有玩家都加载完毕
+---@return boolean isAllLoadFinish
 local function isAllLoadFinish()
   local STATE = DEFINE.STATE
   for _, player in pairs(Data.playerList) do
@@ -104,16 +116,19 @@ local function isAllLoadFinish()
   return true
 end
 
+---玩家加载游戏结束
+---@param uid integer uid
+---@return integer errorCode 错误码
 function _M.playerLoadFinish(uid)
   local errorCode, player = findPlayerByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS_WITH_TAB then
-    return
+    return errorCode
   end
   local STATE = DEFINE.STATE
   player.state = STATE.READY
   -- 所有玩家加载完毕则开始比赛
   if not isAllLoadFinish() then
-    return
+    return ERROR_CODE.RACE_NOT_ALL_READY
   end
   for _, player in pairs(Data.playerList) do
     player.state = STATE.GAMING
@@ -122,11 +137,15 @@ function _M.playerLoadFinish(uid)
   Data.startTime = math.floor(skynet.time())
 end
 
+---玩家更新位置
+---@param uid integer uid
+---@param PositionTable table 位置信息(Position消息的table格式)
+---@return integer errorCode 错误码
 function _M.playerPosition(uid, PositionTable)
   -- 找到上报的玩家
   local errorCode, reporter = findPlayerByUid(uid)
   if errorCode ~= ERROR_CODE.BASE_SUCESS_WITH_TAB then
-    return
+    return errorCode
   end
   -- 向其他玩家同步
   for _, player in pairs(Data.playerList) do
@@ -150,8 +169,11 @@ function _M.playerPosition(uid, PositionTable)
       })
     until true
   end
+  return ERROR_CODE.BASE_SUCESS
 end
 
+---结束游戏
+---@param winUid integer 赢家uid
 local function finishGame(winUid)
   for _, player in pairs(Data.playerList) do
     if player.uid == winUid then
@@ -162,6 +184,8 @@ local function finishGame(winUid)
   skynet.exit()
 end
 
+---检查是否所有玩家都掉线了
+---@return boolean isAllOffline
 local function isAllOffline()
   local STATE = DEFINE.STATE
   for _, player in pairs(Data.playerList) do
@@ -172,6 +196,9 @@ local function isAllOffline()
   return true
 end
 
+---玩家更新游戏状态 (实际操作)
+---@param uid integer uid
+---@param stateCode integer 状态码
 local function playerGameState(uid, stateCode)
   util.log("[Race][Cmd][playerGameState]uid->"..tostring(uid).." stateCode->"..tostring(stateCode))
   local errorCode, player = findPlayerByUid(uid)
@@ -205,6 +232,9 @@ local function playerGameState(uid, stateCode)
   end
 end
 
+---玩家更新游戏状态 (加入队列)
+---@param uid integer uid
+---@param stateCode integer 状态码
 function _M.playerGameState(uid, stateCode)
   stateQueue(playerGameState, uid, stateCode)
 end

@@ -18,6 +18,8 @@ local Data = require "GateData"
 
 local _M = {}
 
+---新客户端连接
+---@param fd number 客户端句柄
 local function newClient(fd)
   util.log("[Gate][Cmd][newClient] fd->"..fd)
   -- 检查客户端数量
@@ -37,6 +39,8 @@ local function newClient(fd)
   }
 end
 
+---启动Gate
+---@param conf table 配置表
 function _M.start(conf)
   util.log("[Gate][Cmd][start] conf->"..util.tabToStr(conf, "block"))
   Data.conf = {
