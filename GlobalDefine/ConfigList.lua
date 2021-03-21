@@ -14,7 +14,7 @@
 --]]
 
 return {
-  ServiceName = true,    -- 服务名表
+  -- ServiceName = true,    -- 服务名表
   RoomRole = true,       -- 房间内规则
   DatabaseConf = false,  -- 数据库相关配置
   RaceConf = true,       -- 比赛配置

@@ -37,21 +37,24 @@ end
 ---@return integer colorId
 local function getColor()
   local COLOR_LIST = Data.GLOBAL_CONFIG.RaceConf.COLOR_LIST
-  local index = 1
+  local playerList = Data.playerList
+
   while true do
-    local colorId = COLOR_LIST[index]
-    local isExists = false
-    for _, player in pairs(Data.playerList) do
-      if colorId == player.colorId then
-        isExists = true
+    local index = math.random(1, util.tabLen(COLOR_LIST))
+    local colorId = util.getValByIdx(COLOR_LIST, index)
+
+    local isUsed = false
+    for _, player in pairs(playerList) do
+      if player.colorId == colorId then
+        isUsed = true
         break
       end
     end
-    if not isExists then
+
+    if not isUsed then
       return colorId
-    else
-      index = index + 1
     end
+
   end
 end
 
@@ -69,7 +72,7 @@ function _M.start(conf)
       name = player.name,
       pos = player.pos,
       state = DEFINE.STATE.LOADING,
-      colorId = player.pos + 1,  -- TODO : 实现getColor(), 现在被阻塞了
+      colorId = getColor(),
       agent = player.agent,
     })
   end
@@ -109,16 +112,18 @@ local function findPlayerByUid(uid)
   return ERROR_CODE.RACE_PLAYER_NOT_EXISTS
 end
 
----检查是否所有玩家都加载完毕
----@return boolean isAllLoadFinish
-local function isAllLoadFinish()
-  util.log("[Race][Cmd][isAllLoadFinish]")
-  local STATE = DEFINE.STATE
+---检查是否所有玩家都处于同一状态
+---@param stateCode integer 状态码
+---@return boolean isAllOffline
+local function isAllSameState(stateCode)
+  util.log("[Race][Cmd][isAllSameState] stateCode->"..tostring(stateCode))
   for _, player in pairs(Data.playerList) do
-    if player.state == (STATE.LOADING or STATE.OFFLINE) then
+    if player.state ~= stateCode then
+      util.log("[Race][Cmd][isAllSameState]false")
       return false
     end
   end
+  util.log("[Race][Cmd][isAllSameState]true")
   return true
 end
 
@@ -134,7 +139,7 @@ function _M.playerLoadFinish(uid)
   local STATE = DEFINE.STATE
   player.state = STATE.READY
   -- 所有玩家加载完毕则开始比赛
-  if not isAllLoadFinish() then
+  if not isAllSameState(STATE.READY) then
     return ERROR_CODE.RACE_NOT_ALL_READY
   end
   for _, player in pairs(Data.playerList) do
@@ -196,19 +201,6 @@ local function finishGame(winUid)
   skynet.exit()
 end
 
----检查是否所有玩家都掉线了
----@return boolean isAllOffline
-local function isAllOffline()
-  util.log("[Race][Cmd][isAllOffline]")
-  local STATE = DEFINE.STATE
-  for _, player in pairs(Data.playerList) do
-    if player.state ~= STATE.OFFLINE then
-      return false
-    end
-  end
-  return true
-end
-
 ---玩家更新游戏状态 (实际操作)
 ---@param uid integer uid
 ---@param stateCode integer 状态码
@@ -239,7 +231,11 @@ local function playerGameState(uid, stateCode)
   if stateCode == STATE.FINISH then
     finishGame(uid)
   elseif stateCode == STATE.OFFLINE then
-    if isAllOffline() then
+    if isAllSameState(stateCode) then
+      finishGame()
+    end
+  elseif stateCode == STATE.OVERTIME then
+    if isAllSameState(stateCode) then
       finishGame()
     end
   end

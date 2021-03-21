@@ -42,15 +42,32 @@ function _M.strToTab(str)
   return tab
 end
 
----获得table的长度
----@param table any
----@return integer len
+---获得table的长度(value的个数)
+---用于当索引不为连续整数时
+---@param table table 取长度的table
+---@return integer len 长度
 function _M.tabLen(table)
   local len = 0
   for _, _ in pairs(table) do
     len = len + 1
   end
   return len
+end
+
+---根据index获取table的值
+---用于当索引不为连续整数时, 按照lua虚拟机中的存储顺序获得值
+---@param table table 取长度的table
+---@param index number 索引
+---@return value any 对应index的value
+function _M.getValByIdx(table, index)
+  for key, value in pairs(table) do
+    if index == 1 then
+      return value
+    else
+      index = index - 1
+    end
+  end
+  return false
 end
 
 return _M

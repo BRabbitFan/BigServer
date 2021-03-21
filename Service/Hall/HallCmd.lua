@@ -13,7 +13,7 @@ local skynet = require "skynet"
 
 local util = require "Util.SvrUtil"
 
-local SVR = require "GameConfig.ServiceName"
+local SVR = require "GlobalDefine.ServiceName"
 local ERROR_CODE = require "GlobalDefine.ErrorCode"
 
 local Data = require "HallData"
