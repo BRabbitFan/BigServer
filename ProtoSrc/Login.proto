@@ -1,0 +1,30 @@
+syntax = "proto2";
+package Packet;
+import "Base.proto";
+
+/********** 登录系统 **********/
+
+/* C2S 注册账号 */
+message ReqRegisterAccount {
+  optional Account register_account = 1;  // 要注册的账号信息
+} 
+/* S2C注册账号结果 */
+message RetRegisterAccount {
+  optional int32 error_code = 1; // 错误码
+}
+
+/* C2S 登录账号 */
+message ReqLoginAccount {
+  optional Account login_account = 1;  // 要登录的账号信息 (不携带name字段)
+}
+/* S2C 登录账号结果 */
+message RetLoginAccount {
+  optional int32 error_code = 1;  // 错误码
+}
+
+/* C2S 查询自己信息 */
+message ReqSelfInfo {}
+/* S2C 返回自己信息 */
+message RetSelfInfo {
+  optional Account account = 1;  // 自己信息
+}

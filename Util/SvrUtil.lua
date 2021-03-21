@@ -29,7 +29,7 @@ end
 ---输出日志
 ---@param msg string 日志信息
 function _M.log(msg)
-  skynet.error("["..os.date("%Y-%m-%d %H:%M:%S").."]"..msg)
+  skynet.error("["..os.date("%Y-%m-%d %H:%M:%S").."] "..msg)
 end
 
 return _M

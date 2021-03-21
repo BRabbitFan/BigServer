@@ -1,0 +1,62 @@
+syntax = "proto2";
+package Packet;
+import "Base.proto";
+
+/********** 游戏系统 **********/
+
+/* 游戏内玩家信息 */
+message GamePlayerInfo {
+  optional Account account_info = 1;  // 玩家账号信息 (不携带password字段)
+  optional int32 game_pos = 2;  // 起跑线位置 : 1->左 ; 2->中 ; 3->右
+  optional int32 color_id = 3;  // 颜色id
+}
+
+/* 游戏基本信息 */
+message GameInfo {
+  optional int32 map_id = 1;  // 地图id
+  repeated GamePlayerInfo player_list = 2;  // 玩家列表
+}
+
+/* S2C 同步加载游戏 */
+message SyncLoadGame {
+  optional GameInfo game_info = 1;  // 游戏信息
+}
+/* C2S 汇报加载游戏完毕 */
+message ReportLoadGame {}
+
+/* C2S 请求开始游戏(加载完毕) */
+message ReqStartGame {}
+/* S2C 同步开始游戏倒计时 */
+message SyncStartGame {}
+
+/* 方位信息 */
+message Position {
+  optional float pos_x = 1;  // 位置 - x轴
+  optional float pos_y = 2;  // 位置 - y轴
+  optional float pos_z = 3;  // 位置 - z轴
+  optional float rot_x = 4;  // 方向 - x轴
+  optional float rot_y = 5;  // 方向 - y轴
+  optional float rot_z = 6;  // 方向 - z轴
+}
+
+/* C2S 汇报自身方位信息 */
+message ReportPosition {
+  optional Position position = 1;  // 自身方位信息
+}
+/* S2C 同步玩家的方位信息 */
+message SyncPosition {
+  optional GamePlayerInfo player = 1;  // 同步的玩家信息
+  optional Position position = 2;  // 玩家的位置
+}
+
+/* C2S 汇报游戏状态 */
+message ReportGameState {
+  optional int32 game_state_code = 1;  // 游戏状态码
+}
+/* S2C 同步游戏状态 */
+message SyncGameState {
+  optional GamePlayerInfo player = 1;  // 同步的玩家信息
+  optional int32 game_state_code = 2;  // 游戏状态码
+  optional int32 add_score = 3;        // 增加的分数(游戏结束时携带)
+  optional int32 use_time = 4;         // 用时(游戏结束时携带)
+}

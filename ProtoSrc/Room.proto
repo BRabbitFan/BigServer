@@ -1,0 +1,43 @@
+syntax = "proto2";
+package Packet;
+import "Base.proto";
+
+/********** 房间系统 **********/
+
+/* 房间内玩家信息 */
+message RoomPlayerInfo {
+  optional Account account_info = 1;  // 玩家账号信息 (不携带uid,password字段)
+  optional int32 room_pos = 2;  // 在房间中的位置
+  optional bool is_master = 3;  // 是否是房主
+  optional bool is_ready = 4;  // 是否已准备
+}
+
+/* 房间完整信息 */
+message RoomInfo {
+  optional int32 room_id = 1;  // 房间id
+  repeated RoomPlayerInfo player_list = 2;  // 玩家列表
+  optional int32 map_id = 3;  // 地图id
+}
+
+/* C2S 请求房间完整信息 */  // ReqJoinRoom
+message ReqRoomInfo {
+  optional int32 room_id = 1;  // 请求的房间id
+}
+/* S2C 返回/同步房间完整信息 */
+message SyncRoomInfo {
+  optional bool is_sync = 1;  // 是否为同步消息
+  optional int32 error_code = 2;  // 错误码
+  optional RoomInfo room_info = 3;  // 房间信息
+}
+
+/* C2S 玩家动作 */
+message ReqPlayerAction {
+  optional int32 action_code = 1;  // 动作
+  optional int32 extend = 2;  // 附加参数 
+}
+/* S2C 返回/同步玩家动作结果 */
+message SyncPlayerAction {
+  optional bool is_sync = 1;  // 是否为同步消息
+  optional int32 action_code = 2;  // 动作
+  optional int32 error_code = 3;  // 错误码
+}
