@@ -20,6 +20,30 @@ local Msg = require "AgentMsg"
 
 local Data = require "AgentData"
 
+function Recver(fd)
+  socket.start(fd)
+  fd = fd or Data.base.fd
+  while true do
+    local msgLen = socket.read(fd, 2)
+    if msgLen then
+      local l1, l2 = string.byte(msgLen, 1, 2)
+      msgLen = l1 * 256 + l2
+      local baseBytes = socket.read(fd, msgLen)
+      local msgName, msgTable = pbmap.unpack(baseBytes)
+      if msgName ~= "ReportPosition" then
+        util.log("[Agent][Recv]"..msgName.." "..util.tabToStr(msgTable, "block"))
+      end
+      local func = Msg[msgName]
+      if func then
+        func(msgTable)
+      end
+    else
+      break
+    end
+  end
+  Cmd.close(fd)
+end
+
 function SendToClient(msgName, msgTable)
   local msgBytes = pbmap.pack(msgName, msgTable)
 

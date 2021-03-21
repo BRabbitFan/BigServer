@@ -10,7 +10,7 @@
 -- -----------------------------
 
 return {
-  ---所有账户列表
+  ---已注册的所有账户列表
   ---@type table<account, boolean>
   AccountList = {},
 

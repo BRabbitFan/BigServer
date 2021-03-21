@@ -23,4 +23,6 @@ return {
     GREEN = 3,
     YELLOW = 4,
   },
+
+  WIN_SCORE = 100,
 }

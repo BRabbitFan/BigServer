@@ -1,14 +1,15 @@
 
-è
+€
 
 Base.protoPacket"7
 BaseMessage
 name (	Rname
-bytes (Rbytes"S
+bytes (Rbytes"i
 Account
 account (	Raccount
 password (	Rpassword
-name (	Rname"P
+name (	Rname
+score (Rscore"P
 ReqRegisterAccount:
 register_account (2.Packet.AccountRregisterAccount"3
 RetRegisterAccount
@@ -18,7 +19,10 @@ error_code (R	errorCode"G
 login_account (2.Packet.AccountRloginAccount"0
 RetLoginAccount
 
-error_code (R	errorCode"]
+error_code (R	errorCode"
+ReqSelfInfo"8
+RetSelfInfo)
+account (2.Packet.AccountRaccount"]
 BaseRoomInfo
 room_id (RroomId
 
@@ -93,7 +97,9 @@ playerList"=
 player (2.Packet.GamePlayerInfoRplayer,
 position (2.Packet.PositionRposition"9
 ReportGameState&
-game_state_code (RgameStateCode"g
+game_state_code (RgameStateCode"Ÿ
 SyncGameState.
 player (2.Packet.GamePlayerInfoRplayer&
-game_state_code (RgameStateCode
+game_state_code (RgameStateCode
+	add_score (RaddScore
+use_time (RuseTime

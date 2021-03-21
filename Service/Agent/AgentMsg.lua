@@ -30,11 +30,13 @@ function _M.ReqLoginAccount(msgTable)
   local errorCode, totalInfo = skynet.call(SVR.login, "lua", "login", info.account, info.password)
 
   if errorCode == ERROR_CODE.BASE_SUCESS then
-    local account = Data.account
-    account.uid = totalInfo.uid
-    account.account = totalInfo.account
-    account.password = totalInfo.password
-    account.name = totalInfo.name
+    Data.account = {
+      uid = totalInfo.uid,
+      account = totalInfo.account,
+      password = totalInfo.password,
+      name = totalInfo.name,
+      score = totalInfo.score,
+    }
   end
 
   SendToClient("RetLoginAccount", {
@@ -49,6 +51,18 @@ function _M.ReqRegisterAccount(msgTable)
 
   SendToClient("RetRegisterAccount", {
     error_code = errorCode,
+  })
+end
+
+-- 查询信息
+function _M.ReqSelfInfo(msgTable)
+  local account = Data.account
+  SendToClient("RetSelfInfo", {
+    account = {
+      account = account.account,
+      name = account.name,
+      score = account.score or 9,
+    },
   })
 end
 

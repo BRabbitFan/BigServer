@@ -20,36 +20,11 @@ local SVR = require "GlobalDefine.ServiceName"
 local RACE_STATE = require("Race.RaceDefine").STATE
 
 local Data = require "AgentData"
-local Msg = require "AgentMsg"
 
 local _M = {}
 
 function _M.sendToClient(msgName, msgTable)
   SendToClient(msgName, msgTable)
-end
-
-local function recver(fd)
-  socket.start(fd)
-  fd = fd or Data.base.fd
-  while true do
-    local msgLen = socket.read(fd, 2)
-    if msgLen then
-      local l1, l2 = string.byte(msgLen, 1, 2)
-      msgLen = l1 * 256 + l2
-      local baseBytes = socket.read(fd, msgLen)
-      local msgName, msgTable = pbmap.unpack(baseBytes)
-      if msgName ~= "ReportPosition" then
-        util.log("[Agent][Recv]"..msgName.." "..util.tabToStr(msgTable, "block"))
-      end
-      local func = Msg[msgName]
-      if func then
-        func(msgTable)
-      end
-    else
-      break
-    end
-  end
-  _M.close(fd)
 end
 
 function _M.start(conf)
@@ -58,7 +33,7 @@ function _M.start(conf)
   base.fd = conf.fd
   base.gate = conf.gate
   skynet.call(SVR.gate, "lua", "forward", base.fd)
-  skynet.fork(recver, base.fd)
+  skynet.fork(Recver, base.fd)
 end
 
 function _M.close(fd)
@@ -91,6 +66,12 @@ end
 function _M.initRace(race)
   Data.room = {}
   Data.race.addr = race
+end
+
+function _M.addScore(score)
+  local account = Data.account
+  account.score = account.score + score
+  skynet.send(SVR.database, "lua", "updateScore", account.uid, account.score)
 end
 
 function _M.raceFinish()

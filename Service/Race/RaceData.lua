@@ -16,6 +16,9 @@ return {
   ---@type integer
   MAP_ID = nil,  -- 地图号
 
+  ---@type integer
+  startTime = nil,  -- 开始时间(时间戳)
+
   ---玩家列表
   ---@type list<_, table<uid|account|name|pos|inOnlie|isFinish|agent, ...>>
   playerList = {

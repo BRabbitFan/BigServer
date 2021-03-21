@@ -114,4 +114,12 @@ function _M.getPlayerInfoByAccount(account)
   return _M.getPlayerInfoByUid(uid)
 end
 
+function _M.updateScore(uid, score)
+  local errorCode = Mysql.updateScore(uid, score)
+  if errorCode ~= ERROR_CODE.BASE_SUCESS then
+    return errorCode
+  end
+  return Redis.updateScore(uid, score)
+end
+
 return _M

@@ -19,6 +19,7 @@ message Account {
   optional string account = 1;   // 账号
   optional string password = 2;  // 密码
   optional string name = 3;      // 名字
+  optional int32 score = 4;      // 积分
 }
 
 /* C2S 注册账号 */
@@ -37,6 +38,13 @@ message ReqLoginAccount {
 /* S2C 登录账号结果 */
 message RetLoginAccount {
   optional int32 error_code = 1;  // 错误码
+}
+
+/* C2S 查询自己信息 */
+message ReqSelfInfo {}
+/* S2C 返回自己信息 */
+message RetSelfInfo {
+  optional Account account = 1;  // 自己信息
 }
 
 /********** 大厅系统 **********/
@@ -170,4 +178,6 @@ message ReportGameState {
 message SyncGameState {
   optional GamePlayerInfo player = 1;  // 同步的玩家信息
   optional int32 game_state_code = 2;  // 游戏状态码
+  optional int32 add_score = 3;        // 增加的分数(游戏结束时携带)
+  optional int32 use_time = 4;         // 用时(游戏结束时携带)
 }

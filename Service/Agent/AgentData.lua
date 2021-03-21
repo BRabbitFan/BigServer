@@ -35,6 +35,9 @@ return {
 
     ---@type string
     name = nil,     ---名字
+
+    ---@type integer
+    score = nil,    ---积分
   },
 
   ---房间信息

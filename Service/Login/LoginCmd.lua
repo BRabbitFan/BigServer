@@ -66,9 +66,9 @@ end
 ---@return integer errorCode 错误码
 function _M.register(source, account, password, name)
   local errorCode, result = skynet.call(SVR.database, "lua", "setPlayerInfo", {
-    account = tostring(account),
-    password = tostring(password),
-    name = tostring(name),
+    account = account,
+    password = password,
+    name = name,
   })
   if errorCode == ERROR_CODE.DB_MYSQL_DUPLICATE_ENTRY then
     return ERROR_CODE.REGISTER_ACOUNT_EXISTS

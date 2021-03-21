@@ -81,4 +81,14 @@ function _M.getUserInfoByUid(uid)
   return ERROR_CODE.BASE_SUCESS, util.strToTab(valueStr)
 end
 
+function _M.updateScore(uid, score)
+  local errorCode, info = _M.getUserInfoByUid(uid)
+  if errorCode ~= ERROR_CODE.BASE_SUCESS then
+    return errorCode
+  end
+
+  info.score = score
+  return _M.setUserInfo(uid, info)
+end
+
 return _M

@@ -119,6 +119,7 @@ function _M.playerLoadFinish(uid)
     player.state = STATE.GAMING
   end
   sendToAll("SyncStartGame", {})
+  Data.startTime = math.floor(skynet.time())
 end
 
 function _M.playerPosition(uid, PositionTable)
@@ -151,9 +152,11 @@ function _M.playerPosition(uid, PositionTable)
   end
 end
 
-local function finishGame()
-  print("finish game")
+local function finishGame(winUid)
   for _, player in pairs(Data.playerList) do
+    if player.uid == winUid then
+      skynet.send(player.agent, "lua", "addScore", Data.GLOBAL_CONFIG.RaceConf.WIN_SCORE)
+    end
     skynet.send(player.agent, "lua", "raceFinish")
   end
   skynet.exit()
@@ -177,8 +180,11 @@ local function playerGameState(uid, stateCode)
   end
   player.state = stateCode
 
+  local useTime = math.floor(skynet.time()) - Data.startTime
   sendToAll("SyncGameState", {
     game_state_code = stateCode,
+    add_score = Data.GLOBAL_CONFIG.RaceConf.WIN_SCORE,
+    use_time = useTime,
     player = {
       game_pos = player.pos,
       color_id = player.colorId,
@@ -191,7 +197,7 @@ local function playerGameState(uid, stateCode)
 
   local STATE = DEFINE.STATE
   if stateCode == STATE.FINISH then
-    finishGame()
+    finishGame(uid)
   elseif stateCode == STATE.OFFLINE then
     if isAllOffline() then
       finishGame()

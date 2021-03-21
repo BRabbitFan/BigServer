@@ -54,6 +54,7 @@ end
 function _M.insertUser(account, password, name)
   account = tostring(account)
   password = tostring(password)
+  name = tostring(name)
   local resTab = db:query(
     "INSERT user (account, password, name) VALUES (\""
     ..account.."\", \""..password.."\", \""..name.."\");")
@@ -110,6 +111,16 @@ function _M.selectUserByUid(uid)
     return ERROR_CODE.DB_MYSQL_DUPLICATE_ENTRY
   end
   return ERROR_CODE.DB_MYSQL_ERROR_WITH_TAB, resTab
+end
+
+function _M.updateScore(uid, score)
+  uid = tostring(uid)
+  score = tostring(score)
+  local resTab = db:query("UPDATE user SET score=\""..score.."\" WHERE uid=\""..uid.."\"")
+
+  if not resTab.badresult then
+    return ERROR_CODE.BASE_SUCESS
+  end
 end
 
 return _M
