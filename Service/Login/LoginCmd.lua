@@ -51,10 +51,13 @@ function _M.chkToken(gate, fd, baseBytes, ip, port, source)
       recvAddr = source,
     }
     skynet.sleep(10)
-    socket.udp_connect(fd, ip, 8001)
-    socket.write(fd, pbmap.pack("RetSyncPort", {
+    socket.sendto(fd, source, pbmap.pack("RetSyncPort", {
       token = token,
     }))
+    -- socket.udp_connect(fd, ip, 8001)
+    -- socket.write(fd, pbmap.pack("RetSyncPort", {
+    --   token = token,
+    -- }))
 
   elseif msgTable.portType == 2 then
     util.log("[login][Cmd][chkToken]portType2")
