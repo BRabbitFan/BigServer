@@ -10,10 +10,15 @@
 -- -----------------------------
 
 local skynet = require "skynet"
+local socket = require "skynet.socket"
+
+local pbmap = require "Util.PbMap"
+local util = require "Util.SvrUtil"
 
 local ERROR_CODE = require "GlobalDefine.ErrorCode"
 local SVR = require "GlobalDefine.ServiceName"
-local util = require "Util.SvrUtil"
+
+local Data = require "LoginData"
 
 local _M = {}
 
@@ -22,6 +27,53 @@ function _M.start(source, conf)
            " source->"..tostring(source)..
            " conf->"..util.tabToStr(conf, "block"))
   util.setSvr(conf.svrName)
+end
+
+local function getNewToken()
+  util.log("[login][Cmd][getNewToken]")
+  Data.maxToken = Data.maxToken + 1
+  return Data.maxToken
+end
+
+function _M.chkToken(gate, fd, baseBytes, ip, port, source)
+  util.log("[login][Cmd][chkToken]")
+  local msgName, msgTable = pbmap.unpack(baseBytes)
+  if msgName ~= "ReqSyncPort" then
+    return
+  end
+
+  if msgTable.portType == 1 then
+    util.log("[login][Cmd][chkToken]portType1")
+    local token = getNewToken()
+    Data.waitChk[token] = {
+      token = token,
+      fd = fd,
+      recvAddr = source,
+    }
+    skynet.sleep(10)
+    socket.udp_connect(fd, ip, 8001)
+    socket.write(fd, pbmap.pack("RetSyncPort", {
+      token = token,
+    }))
+
+  elseif msgTable.portType == 2 then
+    util.log("[login][Cmd][chkToken]portType2")
+    local token = msgTable.token or -1
+    local info = Data.waitChk[token]
+    if not info then
+      return
+    end
+    local agent = skynet.newservice("Agent")
+    skynet.call(agent, "lua", "start", {
+      mode = "udp",
+      fd = fd,
+      sendAddr = source,
+      recvAddr = info.recvAddr,
+    })
+    skynet.send(SVR.gate, "lua", "forward", source, agent)
+    Data.waitChk[token] = nil
+
+  end
 end
 
 ---用户登录

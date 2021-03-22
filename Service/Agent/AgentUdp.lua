@@ -29,14 +29,14 @@ skynet.register_protocol({
   unpack = skynet.unpack,
 })
 
-skynet.dispatch("client", function(session, source, client, baseBytes)
+skynet.dispatch("client", function(session, source, baseBytes)
   local msgName, msgTable = pbmap.unpack(baseBytes)
   if msgName ~= "ReportPosition" then  -- ReportPosition消息太多了不打印日志
     util.log("[Agent][Recv] "..msgName.."\n"..msgName.." "..util.tabToStr(msgTable, "block"))
   end
   local func = Msg[msgName]
   if func then
-    func(msgTable, client)
+    func(msgTable)
   end
 end)
 
@@ -51,7 +51,7 @@ function SendToClient(msgName, msgTable)
     util.log("[Agent][Send] "..name.."\n"..name.." "..util.tabToStr(table, "block"))
   end
 
-  socket.sendto(Data.base.fd, Data.base.client, msgBytes)
+  socket.sendto(Data.base.fd, Data.base.recvAddr, msgBytes)
   -- socket.udp_connect(Data.base.fd, Data.base.address, Data.base.port)
   -- socket.write(Data.base.fd, msgBytes)
 end
@@ -60,7 +60,7 @@ function Close()
   util.log("[Agent][Cmd][close]")
   local uid = Data.account.uid or nil
   -- 关闭连接, 向网关与登录服务通知已登出
-  skynet.send(SVR.gate, "lua", "unforward", Data.base.address)
+  skynet.send(SVR.gate, "lua", "unforward", Data.base.sendAddr)
   skynet.send(SVR.login, "lua", "logout", uid)
   -- 若在房间内 / 在游戏中 , 则通知服务玩家退出
   repeat

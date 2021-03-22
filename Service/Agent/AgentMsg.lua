@@ -50,8 +50,8 @@ function _M.SyncPort(msgTable, client)
 end
 
 -- 登出 (UDP)
-function _M.RetLoginAccount(msgTable)
-  util.log("[Agent][Msg][RetLoginAccount]")
+function _M.ReqLogoutAccount(msgTable)
+  util.log("[Agent][Msg][ReqLogoutAccount]")
   Close()
 end
 

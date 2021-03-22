@@ -15,47 +15,28 @@ local queue = require("skynet.queue")()
 
 local util = require "Util.SvrUtil"
 
+local SVR = require "GlobalDefine.ServiceName"
+
 local Data = require "GateData"
 
 local fd
 
 local _M = {}
 
-local function newClient(address)
-  util.log("[Gate][Cmd][newClient] fd->"..fd)
-  -- 检查客户端数量
-  if util.tabLen(Data.connection) >= Data.conf.maxClient then
+local function recv(bytes, source)
+  util.log("[Gate][Cmd][recv]")
+  local ip, port = socket.udp_address(source)
+  local client = Data.client[source] or {}
+  local agent = client.agent or nil
+  if not agent then
+    skynet.send(SVR.login, "lua", "chkToken", fd, bytes, ip, port, source)
     return
   end
-  -- 开启新Agent
-  local agent = skynet.newservice("Agent")
-  skynet.call(agent, "lua", "start", {
-    mode = "udp",
-    gate = skynet.self(),
-    fd = fd,
-    address = address,
-    port = Data.conf.sendPort,
-  })
-  -- 记录
-  Data.connection[address] = {
-    address = address,
-    fd = fd,
-    agent = agent,
-  }
-end
 
-local function rec(msg, source)
-  local address, port = socket.udp_address(source)
-
-  if not Data.connection[address] then
-    newClient(address)
-  end
-
-  local agent = Data.connection[address].agent
-  skynet.send(agent, "client", source, msg)
+  skynet.send(agent, "client", bytes)
 end
 local function Recver(msg, source)
-  queue(rec, msg, source)
+  queue(recv, msg, source)
 end
 
 skynet.register_protocol({
@@ -80,16 +61,26 @@ function _M.start(conf)
 end
 
 ---Agent准备好
----@param address string 客户端地址
-function _M.forward(address)
-	util.log("[Gate][Cmd][forward] address->"..address)
+---@param sendAddr string 客户端地址(sendAddr)
+function _M.forward(sendAddr, agent)
+  local ip, port = socket.udp_address(sendAddr)
+	util.log("[Gate][Cmd][forward] address->"..ip..":"..port)
+
+  Data.client[sendAddr] = {
+    sendAddr = sendAddr,
+    ip = ip,
+    port = port,
+    agent = agent,
+  }
 end
 
 ---Agent关闭
----@param address string 客户端地址
-function _M.unforward(address)
-	util.log("[Gate][Cmd][unforward] address->"..address)
-	Data.connection[address] = nil
+---@param sendAddr string 客户端发送地址
+function _M.unforward(sendAddr)
+	local ip, port = socket.udp_address(sendAddr)
+	util.log("[Gate][Cmd][forward] address->"..ip..":"..port)
+
+	Data.client[sendAddr] = nil
 end
 
 return _M

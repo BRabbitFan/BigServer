@@ -38,20 +38,18 @@ function _M.start(conf)
   Data.base = {
     mode = conf.mode,
     fd = conf.fd,
-    gate = conf.gate,
-    address = conf.address or nil,  -- UDP mode
-    port = conf.port or nil,  -- UDP mode
+    sendAddr = conf.sendAddr or nil,  -- UDP
+    recvAddr = conf.recvAddr or nil,  -- UDP
   }
 
   local NET_MODE = DEFINE.NET_MODE
   if conf.mode == NET_MODE.UDP then
     require "AgentUdp"
+    -- skynet.call(SVR.gate, "lua", "forward", Data.base.client, skynet.self())
   elseif conf.mode == NET_MODE.TCP then
     require "AgentTcp"
-    skynet.call(SVR.gate, "lua", "forward", Data.base.address)
+    skynet.call(SVR.gate, "lua", "forward", Data.base.fd)
   end
-
-  skynet.call(SVR.gate, "lua", "forward", Data.base.fd)
 end
 
 ---初始化Race服务
