@@ -76,7 +76,7 @@ function _M.start(conf)
   }
   util.setSvr(conf.svrName)
 
-  fd = socket.udp(rec, "0.0.0.0", Data.conf.recvPort)
+  fd = socket.udp(Recver, "0.0.0.0", Data.conf.recvPort)
 end
 
 ---Agent准备好
