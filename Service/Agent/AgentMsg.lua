@@ -44,6 +44,11 @@ function _M.ReqLoginAccount(msgTable)
   })
 end
 
+-- 登记port
+function _M.SyncPort(msgTable, client)
+  Data.base.client = client
+end
+
 -- 登出 (UDP)
 function _M.RetLoginAccount(msgTable)
   util.log("[Agent][Msg][RetLoginAccount]")

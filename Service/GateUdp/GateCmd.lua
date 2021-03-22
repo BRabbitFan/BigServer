@@ -52,7 +52,7 @@ local function rec(msg, source)
   end
 
   local agent = Data.connection[address].agent
-  skynet.send(agent, "client", msg)
+  skynet.send(agent, "client", source, msg)
 end
 local function Recver(msg, source)
   queue(rec, msg, source)

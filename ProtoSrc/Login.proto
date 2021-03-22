@@ -13,6 +13,9 @@ message RetRegisterAccount {
   optional int32 error_code = 1; // 错误码
 }
 
+/* C2S 确认端口 (UDP) */
+message SyncPort {}
+
 /* C2S 登录账号 */
 message ReqLoginAccount {
   optional Account login_account = 1;  // 要登录的账号信息 (不携带name字段)

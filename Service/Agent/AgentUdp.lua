@@ -29,12 +29,14 @@ skynet.register_protocol({
   unpack = skynet.unpack,
 })
 
-skynet.dispatch("client", function(session, source, baseBytes)
+skynet.dispatch("client", function(session, source, client, baseBytes)
   local msgName, msgTable = pbmap.unpack(baseBytes)
-  util.log("[Agent][Recv] "..msgName.."\n"..msgName.." "..util.tabToStr(msgTable, "block"))
+  if msgName ~= "ReportPosition" then  -- ReportPosition消息太多了不打印日志
+    util.log("[Agent][Recv] "..msgName.."\n"..msgName.." "..util.tabToStr(msgTable, "block"))
+  end
   local func = Msg[msgName]
   if func then
-    func(msgTable)
+    func(msgTable, client)
   end
 end)
 
@@ -49,8 +51,9 @@ function SendToClient(msgName, msgTable)
     util.log("[Agent][Send] "..name.."\n"..name.." "..util.tabToStr(table, "block"))
   end
 
-  socket.udp_connect(Data.base.fd, Data.base.address, Data.base.port)
-  socket.write(Data.base.fd, msgBytes)
+  socket.sendto(Data.base.fd, Data.base.client, msgBytes)
+  -- socket.udp_connect(Data.base.fd, Data.base.address, Data.base.port)
+  -- socket.write(Data.base.fd, msgBytes)
 end
 
 function Close()
