@@ -56,7 +56,7 @@ end
 ---@param msgTable table 消息table
 local function sendToAllOnlinePlayer(msgName, msgTable)
   util.log("[Hall][Cmd][sendToAllOnlinePlayer]"..
-           "msgName->"..tostring(msgName)..
+           " msgName->"..tostring(msgName)..
            " msgTable->"..util.tabToStr(msgTable))
   skynet.send(SVR.dataCenter, "lua", "sendToAllOnlinePlayer", msgName, msgTable)
 end
@@ -94,10 +94,13 @@ end
 
 ---玩家创建房间
 ---@param account table 创建房间的玩家账号信息
+---@param agent number 创建房间的玩家账号信息
 ---@return number errorCode 错误码
 ---@return number roomAddr 房间服务地址
 function _M.createRoom(account, agent)
-  util.log("[Hall][Cmd][createRoom] account->"..tostring(account).." agent->"..tostring(account))
+  util.log("[Hall][Cmd][createRoom]"..
+           " account->"..util.tabToStr(account)..
+           " agent->"..tostring(account))
   local info = Data.info
   local roomList = Data.roomList
   -- 检查房间数是否已满

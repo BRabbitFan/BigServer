@@ -16,14 +16,31 @@ local util = require "Util.SvrUtil"
 
 local SVR_NAME = require "GlobalDefine.ServiceName"
 
--- 启动网关
-local function startGate()
+-- 启动网关 (TCP)
+local function startGateTcp()
 	local gateway_port = skynet.getenv("gateway_port") or 8000
 	local max_client = skynet.getenv("max_client") or 32
+
 	local gate = skynet.newservice("Gate")
 	skynet.call(gate, "lua", "start", {
 		addr = "0.0.0.0",
 		port = gateway_port,
+		maxClient = max_client,
+		svrName = SVR_NAME.gate,
+	})
+end
+
+-- 启动网关 (UDP)
+local function startGateUdp()
+	local gateway_port = skynet.getenv("gateway_port") or 8000
+	local client_port = skynet.getenv("client_port") or 8001
+	local max_client = skynet.getenv("max_client") or 32
+
+	local gate = skynet.newservice("GateUdp")
+	skynet.call(gate, "lua", "start", {
+		addr = "0.0.0.0",
+		recvPort = gateway_port,
+		sendPort = client_port,
 		maxClient = max_client,
 		svrName = SVR_NAME.gate,
 	})
@@ -71,7 +88,8 @@ end
 
 skynet.start(function()
 	skynet.newservice("debug_console", 12345)
-	startGate()
+	-- startGateTcp()
+	startGateUdp()
 	startDataCenter()
 	startDatabase()
 	startConfigLoader()

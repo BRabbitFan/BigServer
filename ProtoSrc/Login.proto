@@ -22,6 +22,9 @@ message RetLoginAccount {
   optional int32 error_code = 1;  // 错误码
 }
 
+/* C2S 登出账号 (UDP模式) */
+message ReqLogoutAccount {}
+
 /* C2S 查询自己信息 */
 message ReqSelfInfo {}
 /* S2C 返回自己信息 */

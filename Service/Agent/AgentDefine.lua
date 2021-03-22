@@ -11,7 +11,6 @@
 
 return {
   ---房间内动作
-  ---@type table
   ROOM_ACTION = {
     [1] = "GET_READY",
     [2] = "UN_READY",
@@ -22,4 +21,10 @@ return {
     QUIT_ROOM= 3,    -- 退出房间
     CHANGE_MAP = 4,  -- 换地图
   },
+
+  ---网络连接模式
+  NET_MODE = {
+    TCP = "tcp",
+    UDP = "udp",
+  }
 }

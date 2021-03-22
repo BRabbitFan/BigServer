@@ -44,6 +44,12 @@ function _M.ReqLoginAccount(msgTable)
   })
 end
 
+-- 登出 (UDP)
+function _M.RetLoginAccount(msgTable)
+  util.log("[Agent][Msg][RetLoginAccount]")
+  Close()
+end
+
 -- 注册
 function _M.ReqRegisterAccount(msgTable)
   util.log("[Agent][Msg][ReqRegisterAccount]")

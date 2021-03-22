@@ -101,11 +101,13 @@ local function recver(fd)
 end
 
 function _M.connect()
-  Server = socket.open(server.addr, server.port)
-  -- skynet.fork(sender, Server)
-  skynet.fork(recver, Server)
-  socket.write(Server, netpack.pack("123"))
-  -- socket.write(Server, netpack.pack("close"))
+  -- Server = socket.open(server.addr, server.port)
+  -- -- skynet.fork(sender, Server)
+  -- skynet.fork(recver, Server)
+  -- socket.write(Server, netpack.pack("123"))
+  -- -- socket.write(Server, netpack.pack("close"))
+
+  
 end
 
 return _M

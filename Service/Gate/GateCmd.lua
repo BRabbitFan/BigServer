@@ -29,6 +29,7 @@ local function newClient(fd)
   -- 开启新Agent
   local agent = skynet.newservice("Agent")
   skynet.send(agent, "lua", "start", {
+    mode = "tcp",
     gate = skynet.self(),
     fd = fd,
   })

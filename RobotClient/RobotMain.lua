@@ -11,6 +11,8 @@
 
 local skynet = require "skynet"
 
+local socket = require "skynet.socket"
+
 local util = require "Util.BaseUtil"
 
 ---客户端列表
@@ -37,20 +39,43 @@ function StartClient(conf)
   }
 end
 
+
+
+local function client(fd)
+
+  socket.udp_connect(fd, "127.0.0.1", 8000)
+  local i = 0
+  while(i < 3) do
+    socket.write(fd, "data"..i)
+    skynet.error("send data"..i)
+    i = i + 1
+  end
+  -- socket.close(fd)
+  -- skynet.exit()
+end
+
+local function udp_recv(str, from)
+  local address, port = socket.udp_address(from)
+  skynet.error("recv udp data from: " .. address .. ":" .. port .. " data:" .. str)
+  --socket.sendto(socket_id, from, string.upper(str))
+end
+
 skynet.start(function()
-  ServerAddr = skynet.getenv "server_addr"
-  ServerPort = skynet.getenv "server_port"
+  -- ServerAddr = skynet.getenv "server_addr"
+  -- ServerPort = skynet.getenv "server_port"
 
-  -- print(type(ServerAddr), type(ServerPort))
+  -- -- print(type(ServerAddr), type(ServerPort))
 
-  StartClient({
-    MainSvr = skynet.self(),
-    account = "jhfan",
-    password = "fanjh",
-    addr = ServerAddr,
-    port = ServerPort,
-  })
+  -- StartClient({
+  --   MainSvr = skynet.self(),
+  --   account = "jhfan",
+  --   password = "fanjh",
+  --   addr = ServerAddr,
+  --   port = ServerPort,
+  -- })
 
-  skynet.send(ClientList.jhfan.client, "lua", "connect")
+  -- skynet.send(ClientList.jhfan.client, "lua", "connect")
 
+  local fd = socket.udp(udp_recv)
+  skynet.fork(client, fd)
 end)

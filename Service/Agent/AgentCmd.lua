@@ -10,13 +10,12 @@
 -- -----------------------------
 
 local skynet = require "skynet"
-local socket = require "skynet.socket"
 
 local util = require "Util.SvrUtil"
 
 local SVR = require "GlobalDefine.ServiceName"
 
-local RACE_STATE = require("Race.RaceDefine").STATE
+local DEFINE = require "AgentDefine"
 
 local Data = require "AgentData"
 
@@ -35,39 +34,24 @@ end
 ---@param conf table 参数列表
 function _M.start(conf)
   util.log("[Agent][Cmd][start] conf->" .. util.tabToStr(conf, "block"))
-  local base = Data.base
-  base.fd = conf.fd
-  base.gate = conf.gate
-  skynet.call(SVR.gate, "lua", "forward", base.fd)
-  skynet.fork(Recver, base.fd)
-end
 
----关闭Agent
----@param fd number 客户端句柄
-function _M.close(fd)
-  util.log("[Agent][Cmd][close] fd->"..tostring(fd))
-  fd = fd or Data.base.fd
-  local uid = Data.account.uid or nil
-  -- 关闭连接, 向网关与登录服务通知已登出
-  socket.close(fd)
-  skynet.send(SVR.gate, "lua", "unforward", fd)
-  skynet.send(SVR.login, "lua", "logout", uid)
-  -- 若在房间内 / 在游戏中 , 则通知服务玩家退出
-  repeat
-    local room = Data.room.addr
-    if room then
-      skynet.send(room, "lua", "playerQuit", uid)
-      break
-    end
+  Data.base = {
+    mode = conf.mode,
+    fd = conf.fd,
+    gate = conf.gate,
+    address = conf.address or nil,  -- UDP mode
+    port = conf.port or nil,  -- UDP mode
+  }
 
-    local race = Data.race.addr
-    if race then
-      skynet.send(race, "lua", "playerGameState", uid, RACE_STATE.OFFLINE)
-      break
-    end
-  until true
-  -- 关闭Agent
-  skynet.exit()
+  local NET_MODE = DEFINE.NET_MODE
+  if conf.mode == NET_MODE.UDP then
+    require "AgentUdp"
+  elseif conf.mode == NET_MODE.TCP then
+    require "AgentTcp"
+    skynet.call(SVR.gate, "lua", "forward", Data.base.address)
+  end
+
+  skynet.call(SVR.gate, "lua", "forward", Data.base.fd)
 end
 
 ---初始化Race服务

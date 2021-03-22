@@ -14,11 +14,20 @@ return {
   ---基本信息
   ---@type table<fd|gate, ...>
   base = {
+    ---@type string
+    mode = nil,  -- 网络连接模式 ("tcp" / "udp")
+
     ---@type number
     fd = nil,    -- 客户端socket句柄
 
     ---@type number
     gate = nil,  -- 网关地址
+
+    ---@type number
+    address = nil,  -- 客户端地址 (UDP)
+
+    ---@type number
+    port = nil,  -- 客户端接收端口 (UDP)
   },
 
   ---账号信息

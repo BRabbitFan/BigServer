@@ -26,11 +26,11 @@ MainSvr = nil
 Server = nil
 
 skynet.start(function()
-  skynet.dispatch("lua", function(session, source, cmd, ...)
-    local f = CMD[cmd]
-    if f then
-      skynet.retpack(f(...))
-    end
-  end)
-  skynet.error("client start!!!!")
+  -- skynet.dispatch("lua", function(session, source, cmd, ...)
+  --   local f = CMD[cmd]
+  --   if f then
+  --     skynet.retpack(f(...))
+  --   end
+  -- end)
+  -- skynet.error("client start!!!!")
 end)

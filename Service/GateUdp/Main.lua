@@ -2,23 +2,19 @@
 -- https://github.com/BRabbitFan
 -- -----------------------------
 -- Author       : BRabbitFan
--- Date         : 2021-01-29 19:39:48
+-- Date         : 2021-03-22 13:06:10
 -- LastEditer   : BRabbitFan
--- LastEditTime : 2021-03-16 15:43:26
--- FilePath     : /BigServer/Service/Agent/Main.lua
--- Description  : Agent服务入口 -- 一个Agent对应一个Client
+-- LastEditTime : 2021-03-22 13:06:10
+-- FilePath     : /BigServer/Service/GateUdp/Main.lua
+-- Description  : UDP网关--入口
 -- -----------------------------
 
 local skynet = require "skynet"
 local socket = require "skynet.socket"
 
-local pbmap = require "Util.PbMap"
 local util = require "Util.SvrUtil"
 
-local Cmd = require "AgentCmd"
-local Msg = require "AgentMsg"
-
-local Data = require "AgentData"
+local Cmd = require "GateCmd"
 
 skynet.start(function()
   skynet.dispatch("lua", function(session, source, cmd, ...)
