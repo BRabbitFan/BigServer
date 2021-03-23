@@ -21,6 +21,20 @@ local Data = require "AgentData"
 
 local _M = {}
 
+------------------------------ Base ------------------------------
+
+-- -- 登记端口
+-- function _M.SyncPort(msgTable, client)
+--   Data.base.client = client
+-- end
+
+-- 心跳
+function _M.Ping(msgTable)
+  -- util.log("[Agent][Msg][Ping]")
+  Data.base.lastPing = 0;
+  SendToClient("Pong", {})
+end
+
 ------------------------------ Login ------------------------------
 
 -- 登录
@@ -42,11 +56,6 @@ function _M.ReqLoginAccount(msgTable)
   SendToClient("RetLoginAccount", {
     error_code = errorCode,
   })
-end
-
--- 登记port
-function _M.SyncPort(msgTable, client)
-  Data.base.client = client
 end
 
 -- 登出 (UDP)

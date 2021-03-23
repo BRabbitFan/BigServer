@@ -1,5 +1,5 @@
 
-¸
+ð
 
 Base.protoPacket"7
 BaseMessage
@@ -9,4 +9,8 @@ Base.protoPacket"7
 account (	Raccount
 password (	Rpassword
 name (	Rname
-score (Rscore
+score (Rscore"
+Ping
+time (Rtime"
+Pong
+time (Rtime

@@ -21,3 +21,12 @@ message Account {
   optional string name = 3;      // 名字
   optional int32 score = 4;      // 积分
 }
+
+/* C2S 心跳包 */
+message Ping {
+  optional int32 time = 1;  // 时间戳
+}
+/* S2C 心跳包 */
+message Pong {
+  optional int32 time = 1;  // 时间戳
+}

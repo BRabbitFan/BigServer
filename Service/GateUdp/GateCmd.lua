@@ -24,7 +24,7 @@ local fd
 local _M = {}
 
 local function recv(bytes, source)
-  util.log("[Gate][Cmd][recv]")
+  -- util.log("[Gate][Cmd][recv]")
   local ip, port = socket.udp_address(source)
   local client = Data.client[source] or {}
   local agent = client.agent or nil
