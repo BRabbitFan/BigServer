@@ -79,3 +79,16 @@ function Close()
   -- 关闭Agent
   skynet.exit()
 end
+
+skynet.fork(function()
+  local base = Data.base
+  base.lastPing = 0
+  while true do
+    skynet.sleep(100)
+    base.lastPing = base.lastPing + 1
+
+    if base.lastPing > 30 then
+      Close()
+    end
+  end
+end)

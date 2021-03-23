@@ -28,6 +28,9 @@ return {
 
     ---@type number
     port = nil,  -- 客户端接收端口 (UDP)
+
+    ---@type number
+    lastPing = nil,  -- 距离上一次心跳的时间
   },
 
   ---账号信息

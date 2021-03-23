@@ -1,9 +1,13 @@
-local Data = require "GateData"
---local Data = require "AgentData"
+local args = ...
+
+if not args then
+  print("args is nil")
+  return
+end
+
+local svrData = args .. "Data"
+
+local Data = require(svrData)
 local util = require "Util.SvrUtil"
 
--- local Cmd = require "DataCenterCmd"
-
--- Cmd.setPlayerRegister("aaa")
-
-print(util.tabToStr(Data, "block"))
+print(svrData .. " = " .. util.tabToStr(Data, "block"))
