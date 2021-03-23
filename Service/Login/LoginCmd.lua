@@ -16,26 +16,38 @@ local pbmap = require "Util.PbMap"
 local util = require "Util.SvrUtil"
 
 local ERROR_CODE = require "GlobalDefine.ErrorCode"
+local NET_MODE = require("GlobalDefine.GateDefine").NET_MODE
 local SVR = require "GlobalDefine.ServiceName"
 
 local Data = require "LoginData"
 
 local _M = {}
 
+---启动Login
+---@param source number 源地址
+---@param conf table 配置表
 function _M.start(source, conf)
   util.log("[Login][Cmd][start]"..
            " source->"..tostring(source)..
            " conf->"..util.tabToStr(conf, "block"))
   util.setSvr(conf.svrName)
+  Data.maxToken = 0
 end
 
+---获得Token
+---@return integer 未使用的token
 local function getNewToken()
   util.log("[login][Cmd][getNewToken]")
   Data.maxToken = Data.maxToken + 1
   return Data.maxToken
 end
 
-function _M.chkToken(gate, fd, baseBytes, ip, port, source)
+---检查token(确认UDP连接)
+---@param source number 服务内消息源地址(网关)
+---@param fd number 句柄
+---@param baseBytes byte 消息字节
+---@param addr byte 网络消息源地址(客户端)
+function _M.chkToken(source, fd, baseBytes, addr)
   util.log("[login][Cmd][chkToken]")
   local msgName, msgTable = pbmap.unpack(baseBytes)
   if msgName ~= "ReqSyncPort" then
@@ -48,16 +60,12 @@ function _M.chkToken(gate, fd, baseBytes, ip, port, source)
     Data.waitChk[token] = {
       token = token,
       fd = fd,
-      recvAddr = source,
+      recvAddr = addr,
     }
     skynet.sleep(10)
-    socket.sendto(fd, source, pbmap.pack("RetSyncPort", {
+    socket.sendto(fd, addr, pbmap.pack("RetSyncPort", {
       token = token,
     }))
-    -- socket.udp_connect(fd, ip, 8001)
-    -- socket.write(fd, pbmap.pack("RetSyncPort", {
-    --   token = token,
-    -- }))
 
   elseif msgTable.portType == 2 then
     util.log("[login][Cmd][chkToken]portType2")
@@ -68,14 +76,13 @@ function _M.chkToken(gate, fd, baseBytes, ip, port, source)
     end
     local agent = skynet.newservice("Agent")
     skynet.call(agent, "lua", "start", {
-      mode = "udp",
+      mode = NET_MODE.UDP,
       fd = fd,
-      sendAddr = source,
+      sendAddr = addr,
       recvAddr = info.recvAddr,
     })
-    skynet.send(SVR.gate, "lua", "forward", source, agent)
+    skynet.send(SVR.gate, "lua", "forward", addr, agent)
     Data.waitChk[token] = nil
-
   end
 end
 

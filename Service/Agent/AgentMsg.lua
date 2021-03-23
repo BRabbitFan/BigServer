@@ -23,11 +23,6 @@ local _M = {}
 
 ------------------------------ Base ------------------------------
 
--- -- 登记端口
--- function _M.SyncPort(msgTable, client)
---   Data.base.client = client
--- end
-
 -- 心跳
 function _M.Ping(msgTable)
   -- util.log("[Agent][Msg][Ping]")

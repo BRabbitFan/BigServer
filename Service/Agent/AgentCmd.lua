@@ -14,6 +14,7 @@ local skynet = require "skynet"
 local util = require "Util.SvrUtil"
 
 local SVR = require "GlobalDefine.ServiceName"
+local NET_MODE = require("GlobalDefine.GateDefine").NET_MODE
 
 local DEFINE = require "AgentDefine"
 
@@ -42,10 +43,8 @@ function _M.start(conf)
     recvAddr = conf.recvAddr or nil,  -- UDP
   }
 
-  local NET_MODE = DEFINE.NET_MODE
   if conf.mode == NET_MODE.UDP then
     require "AgentUdp"
-    -- skynet.call(SVR.gate, "lua", "forward", Data.base.client, skynet.self())
   elseif conf.mode == NET_MODE.TCP then
     require "AgentTcp"
     skynet.call(SVR.gate, "lua", "forward", Data.base.fd)

@@ -90,4 +90,5 @@ function Close(fd)
   skynet.exit()
 end
 
+-- 开启接收线程
 skynet.fork(Recver, Data.base.fd)

@@ -14,12 +14,7 @@ return {
   ---@type table<addr|port|maxClient|svrName, ...>
   conf = {},
 
-  ---token->链接信息映射
-  ---@type table<token, fd|address|agent>
+  ---addr->链接信息映射
+  ---@type table<addr, sendAddr|ip|port|agent>
   client = {},
-
-  maxToken = 0,
-
-  ---ip:port -> token
-  addrToToken = {}
 }

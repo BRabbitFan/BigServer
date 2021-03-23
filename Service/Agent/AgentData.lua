@@ -20,14 +20,11 @@ return {
     ---@type number
     fd = nil,    -- 客户端socket句柄
 
-    ---@type number
-    gate = nil,  -- 网关地址
+    ---@type byte
+    sendAddr = nil,  -- 客户端发送地址
 
-    ---@type number
-    address = nil,  -- 客户端地址 (UDP)
-
-    ---@type number
-    port = nil,  -- 客户端接收端口 (UDP)
+    ---@type byte
+    recvAddr = nil,  -- 客户端接收地址
 
     ---@type number
     lastPing = nil,  -- 距离上一次心跳的时间

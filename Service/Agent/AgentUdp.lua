@@ -18,10 +18,10 @@ local util = require "Util.SvrUtil"
 local RACE_STATE = require("Race.RaceDefine").STATE
 local SVR = require "GlobalDefine.ServiceName"
 
-local Cmd = require "AgentCmd"
 local Msg = require "AgentMsg"
 local Data = require "AgentData"
 
+-- 注册client类型消息, Agent只做处理, 不发送
 skynet.register_protocol({
   name = "client",
   id = skynet.PTYPE_CLIENT,
@@ -29,6 +29,10 @@ skynet.register_protocol({
   unpack = skynet.unpack,
 })
 
+---处理client类型消息, 即客户端发来的信息
+---@param session number 服务内消息session
+---@param source number 源地址(网关)
+---@param baseBytes byte 消息字节
 skynet.dispatch("client", function(session, source, baseBytes)
   local msgName, msgTable = pbmap.unpack(baseBytes)
   if msgName ~= "ReportPosition" then  -- ReportPosition消息太多了不打印日志
@@ -56,6 +60,7 @@ function SendToClient(msgName, msgTable)
   -- socket.write(Data.base.fd, msgBytes)
 end
 
+---客户端退出, 关闭Agent
 function Close()
   util.log("[Agent][Cmd][close]")
   local uid = Data.account.uid or nil
@@ -80,6 +85,7 @@ function Close()
   skynet.exit()
 end
 
+-- 心跳计时器 每秒更新心跳间隔
 skynet.fork(function()
   local base = Data.base
   base.lastPing = 0

@@ -23,22 +23,29 @@ local fd
 
 local _M = {}
 
+---处理客户端消息, 转发至Agent/Login
+---@param bytes byte 消息字节
+---@param source byte 来源 (客户端)
 local function recv(bytes, source)
-  -- util.log("[Gate][Cmd][recv]")
   local ip, port = socket.udp_address(source)
   local client = Data.client[source] or {}
   local agent = client.agent or nil
   if not agent then
-    skynet.send(SVR.login, "lua", "chkToken", fd, bytes, ip, port, source)
+    skynet.send(SVR.login, "lua", "chkToken", fd, bytes, source)
     return
   end
 
   skynet.send(agent, "client", bytes)
 end
-local function Recver(msg, source)
-  queue(recv, msg, source)
+
+---接收客户端的消息, 加入消息队列(recv处理)
+---@param bytes byte 消息字节
+---@param source byte 来源 (客户端)
+local function Recver(bytes, source)
+  queue(recv, bytes, source)
 end
 
+-- 注册client消息, 网关只转发不接收
 skynet.register_protocol({
   name = "client",
   id = skynet.PTYPE_CLIENT,
@@ -46,6 +53,8 @@ skynet.register_protocol({
   -- unpack = skynet.unpack,
 })
 
+---启动网关
+---@param conf table 配置表
 function _M.start(conf)
   util.log("[Gate][Cmd][start] conf->"..util.tabToStr(conf, "block"))
   Data.conf = {

@@ -10,6 +10,16 @@
 -- -----------------------------
 
 return {
-  maxToken = 0,
-  waitChk = {},
+  ---@type integer
+  maxToken = nil,  -- 最大token
+
+  ---等待检查列表
+  ---@type table<mode|token|fd|recvAddr|sendAddr, ...>
+  waitChk = {
+    -- mode = "udp",
+    -- token = 1234,
+    -- fd = 6,
+    -- recvAddr = ...,
+    -- sendAddr = ...,
+  },
 }

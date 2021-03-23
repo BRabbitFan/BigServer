@@ -21,7 +21,7 @@ local function startGateTcp()
 	local gateway_port = skynet.getenv("gateway_port") or 8000
 	local max_client = skynet.getenv("max_client") or 32
 
-	local gate = skynet.newservice("Gate")
+	local gate = skynet.newservice("GateTcp")
 	skynet.call(gate, "lua", "start", {
 		addr = "0.0.0.0",
 		port = gateway_port,
