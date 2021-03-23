@@ -11,5 +11,5 @@
 
 return {
   maxRoomNum = 3;    -- 最大房间数量
-  maxPlayerNum = 2;  -- 最大玩家数量
+  maxPlayerNum = 3;  -- 最大玩家数量
 }
