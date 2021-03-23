@@ -15,7 +15,7 @@ return {
     port = 3306,
     database = "big_server",
     user = "jhfan",
-    password = "0324Fanjh1556",
+    password = "03241556",
     maxPacketSize = (1024 * 1024),
   },
 
