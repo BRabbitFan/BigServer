@@ -14,6 +14,8 @@ local socket = require "skynet.socket"
 
 local util = require "Util.SvrUtil"
 
+local NET_MODE = require("GlobalDefine.GateDefine").NET_MODE
+
 local Data = require "GateData"
 
 local _M = {}
@@ -29,7 +31,7 @@ local function newClient(fd)
   -- 开启新Agent
   local agent = skynet.newservice("Agent")
   skynet.send(agent, "lua", "start", {
-    mode = "tcp",
+    mode = NET_MODE.TCP,
     gate = skynet.self(),
     fd = fd,
   })

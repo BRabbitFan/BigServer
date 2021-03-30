@@ -17,4 +17,17 @@ return {
   ---addr->链接信息映射
   ---@type table<addr, sendAddr|ip|port|agent>
   client = {},
+
+  ---@type integer
+  maxToken = nil,  -- 最大token
+
+  ---等待检查列表
+  ---@type table<mode|token|fd|recvAddr|sendAddr, ...>
+  waitChk = {
+    -- mode = "udp",
+    -- token = 1234,
+    -- fd = 6,
+    -- recvAddr = ...,
+    -- sendAddr = ...,
+  },
 }
