@@ -14,12 +14,14 @@ message BaseMessage {
   required bytes bytes = 2;
 }
 
-/* 账号 */
-message Account {
-  optional string account = 1;   // 账号
-  optional string password = 2;  // 密码
-  optional string name = 3;      // 名字
-  optional int32 score = 4;      // 积分
+/* C2S 确认端口 (UDP) */
+message ReqSyncPort {
+  optional int32 token = 1;  // 令牌, 标识同一客户端
+  optional int32 portType = 2;  // 端口类型 1-客户端接收端口 2-客户端发送端口
+}
+/* S2C 确认端口 (UDP) */
+message RetSyncPort {
+  optional int32 token = 1;  // 令牌, 标识同一客户端
 }
 
 /* C2S 心跳包 */
@@ -29,4 +31,12 @@ message Ping {
 /* S2C 心跳包 */
 message Pong {
   optional int32 time = 1;  // 时间戳
+}
+
+/* 账号 */
+message Account {
+  optional string account = 1;   // 账号
+  optional string password = 2;  // 密码
+  optional string name = 3;      // 名字
+  optional int32 score = 4;      // 积分
 }

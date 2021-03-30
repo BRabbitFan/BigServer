@@ -17,11 +17,11 @@ local util = require "Util.SvrUtil"
 local pbmap = require "Util.PbMap"
 
 local NET_MODE = require("GlobalDefine.GateDefine").NET_MODE
-local SVR = require "GlobalDefine.ServiceName"
+local PORT_TYPE = require("GlobalDefine.GateDefine").PORT_TYPE
 
 local Data = require "GateData"
 
-local fd
+local recvFd
 
 local _M = {}
 
@@ -44,7 +44,7 @@ local function chkToken(fd, baseBytes, addr)
     return
   end
 
-  if msgTable.portType == 1 then
+  if msgTable.portType == PORT_TYPE.RECV_PORT then
     util.log("[login][Cmd][chkToken]portType1")
     local token = getNewToken()
     Data.waitChk[token] = {
@@ -57,7 +57,7 @@ local function chkToken(fd, baseBytes, addr)
       token = token,
     }))
 
-  elseif msgTable.portType == 2 then
+  elseif msgTable.portType == PORT_TYPE.SEND_PORT then
     util.log("[login][Cmd][chkToken]portType2")
     local token = msgTable.token or -1
     local info = Data.waitChk[token]
@@ -65,14 +65,12 @@ local function chkToken(fd, baseBytes, addr)
       return
     end
     local agent = skynet.newservice("Agent")
-    skynet.call(agent, "lua", "start", {
+    skynet.send(agent, "lua", "start", {
       mode = NET_MODE.UDP,
       fd = fd,
       sendAddr = addr,
       recvAddr = info.recvAddr,
     })
-    -- skynet.send(SVR.gate, "lua", "forward", addr, agent)
-    _M.forward(addr, agent)
     Data.waitChk[token] = nil
   end
 end
@@ -81,12 +79,10 @@ end
 ---@param bytes byte 消息字节
 ---@param source byte 来源 (客户端)
 local function recv(bytes, source)
-  local ip, port = socket.udp_address(source)
   local client = Data.client[source] or {}
   local agent = client.agent or nil
   if not agent then
-    -- skynet.send(SVR.login, "lua", "chkToken", fd, bytes, source)
-    chkToken(fd, bytes, source)
+    chkToken(recvFd, bytes, source)
     return
   end
 
@@ -123,7 +119,7 @@ function _M.start(conf)
 
   Data.maxToken = 0
 
-  fd = socket.udp(Recver, "0.0.0.0", Data.conf.recvPort)
+  recvFd = socket.udp(Recver, "0.0.0.0", Data.conf.recvPort)
 end
 
 ---Agent准备好

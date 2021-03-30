@@ -43,12 +43,15 @@ function _M.start(conf)
     recvAddr = conf.recvAddr or nil,  -- UDP
   }
 
+  local base = Data.base
   if conf.mode == NET_MODE.UDP then
     require "AgentUdp"
+    skynet.call(SVR.gate, "lua", "forward", base.sendAddr, skynet.self())
   elseif conf.mode == NET_MODE.TCP then
     require "AgentTcp"
-    skynet.call(SVR.gate, "lua", "forward", Data.base.fd)
+    skynet.call(SVR.gate, "lua", "forward", base.fd)
   end
+
 end
 
 ---初始化Race服务

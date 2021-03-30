@@ -14,5 +14,11 @@ return {
   NET_MODE = {
     TCP = "tcp",
     UDP = "udp",
-  }
+  },
+
+  ---UDP模式下客户端端口类型
+  PORT_TYPE = {
+    RECV_PORT = 1,
+    SEND_PORT = 2,
+  },
 }
