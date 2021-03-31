@@ -15,6 +15,9 @@ local socket = require "skynet.socket"
 local pbmap = require "Util.PbMap"
 local util = require "Util.SvrUtil"
 
+local SVR = require "GlobalDefine.ServiceName"
+local RACE_STATE = require("Race.RaceDefine").STATE
+
 local Cmd = require "AgentCmd"
 local Msg = require "AgentMsg"
 local Data = require "AgentData"

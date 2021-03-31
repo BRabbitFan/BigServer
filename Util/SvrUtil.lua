@@ -31,5 +31,6 @@ end
 function _M.log(msg)
   skynet.error("["..os.date("%Y-%m-%d %H:%M:%S").."] "..msg)
 end
+_M.log = skynet.error
 
 return _M
