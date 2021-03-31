@@ -68,7 +68,7 @@ function _M.addScore(score)
   util.log("[Agent][Cmd][addScore] score->"..tostring(score))
   local account = Data.account
   account.score = account.score + score
-  skynet.send(SVR.database, "lua", "updateScore", account.uid, account.score)
+  skynet.send(SVR.dataCenter, "lua", "updateScore", account.uid, account.score)
 end
 
 ---比赛结束

@@ -13,6 +13,7 @@ local skynet = require "skynet"
 
 local util = require "Util.SvrUtil"
 local ERROR_CODE = require "GlobalDefine.ErrorCode"
+local SVR = require "GlobalDefine.ServiceName"
 
 local Data = require "DataCenterData"
 
@@ -124,6 +125,46 @@ function _M.sendToAllOnlinePlayer(msgName, msgTable)
   for uid, agent in pairs(Data.UidToAgent) do
     skynet.send(agent, "lua", "sendToClient", msgName, msgTable)
   end
+end
+
+---设置玩家账号信息
+---@param infoTab table<account|password, ...> 账号信息
+---@return integer errorCode 错误码
+---@return table result 查询结果(BASE_SUCESS) / 错误信息(未知错误)
+function _M.setPlayerInfo(infoTab)
+  return skynet.call(SVR.database, "lua", "setPlayerInfo", infoTab)
+end
+
+---获取玩家账号信息, 通过uid
+---@param uid integer uid
+---@return integer errorCode 错误码
+---@return table infoTable 账户信息
+function _M.getPlayerInfoByUid(uid)
+  return skynet.call(SVR.database, "lua", "getPlayerInfoByUid", uid)
+end
+
+---通过account获取玩家uid
+---@param account string 账户
+---@return integer errorCode 错误码
+---@return integer uid uid
+function _M.getUidByAccount(account)
+  return skynet.call(SVR.database, "lua", "getUidByAccount", account)
+end
+
+---获取玩家账号信息, 通过账号
+---@param account string 账号
+---@return integer errorCode 错误码
+---@return table infoTable 账户信息
+function _M.getPlayerInfoByAccount(account)
+  return skynet.call(SVR.database, "lua", "getPlayerInfoByAccount", account)
+end
+
+---更新玩家分数
+---@param uid integer 玩家uid
+---@param newScore integer 新分数
+---@return integer errorCode 错误码
+function _M.updateScore(uid, newScore)
+  return skynet.call(SVR.database, "lua", "updateScore", uid, newScore)
 end
 
 return _M

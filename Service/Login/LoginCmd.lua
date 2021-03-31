@@ -45,7 +45,7 @@ function _M.login(source, account, password)
     return ERROR_CODE.LOGIN_ACOUNT_NOT_EXISTS
   end
   -- 检查是否已登录
-  local _, info = skynet.call(SVR.database, "lua", "getPlayerInfoByAccount", account)
+  local _, info = skynet.call(SVR.dataCenter, "lua", "getPlayerInfoByAccount", account)
   errorCode = skynet.call(SVR.dataCenter, "lua", "chkIsLoginByUid", info.uid)
   if errorCode == ERROR_CODE.BASE_SUCESS then
     return ERROR_CODE.LOGIN_SIGNED_IN_ALREADY
@@ -84,7 +84,7 @@ function _M.register(source, account, password, name)
            " account->"..tostring(account)..
            " password->"..tostring(password)..
            " name->"..tostring(name))
-  local errorCode, result = skynet.call(SVR.database, "lua", "setPlayerInfo", {
+  local errorCode, result = skynet.call(SVR.dataCenter, "lua", "setPlayerInfo", {
     account = account,
     password = password,
     name = name,
