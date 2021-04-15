@@ -19,10 +19,10 @@ local BASE_MSG = "BaseMessage"  -- 统一外层消息名
 
 local pbList = {
   PB_SRC.."Base.pb",       -- 基础消息
-  PB_SRC.."Login.pb",       -- 基础消息
-  PB_SRC.."Hall.pb",       -- 基础消息
-  PB_SRC.."Room.pb",       -- 基础消息
-  PB_SRC.."Race.pb",       -- 基础消息
+  PB_SRC.."Login.pb",      -- 登录系统
+  PB_SRC.."Hall.pb",       -- 大厅系统
+  PB_SRC.."Room.pb",       -- 房间系统
+  PB_SRC.."Race.pb",       -- 比赛系统
 }
 
 ---加载pb文件
